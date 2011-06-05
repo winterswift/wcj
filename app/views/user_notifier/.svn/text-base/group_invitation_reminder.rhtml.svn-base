@@ -1,0 +1,16 @@
+Hello <% @user.name %>,
+
+This email is from the Word Count Journal website.
+<% if ( @group.owner == @user )%>
+You, the owner of the group '<%= @group.title %>', have invited <%= @member.name.blank? ? @member.email : @member.name %> to join your group.
+
+<% else %>
+You have invited <%= @member.name ? @member.name : @member.email %> to join the group, '<%= @group.title %>'.
+A notification was also sent to the group owner, at<% @group.owner.email %>
+<% end %>
+<%= @member.name ? "" : "An invitation has been sent to #{@member.email}" %>.
+
+-- The Word Count Journal Team
+
+Word Count Journal
+http://<%= Settings.http_host_name %>

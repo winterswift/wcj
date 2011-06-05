@@ -1,0 +1,6 @@
+<h1>Editing journal: <%= @journal.title %></h1>
+
+<%= start_form_tag @journal.url_hash.merge(:action => 'update') %>
+  <%= render :partial => 'form' %>
+  <%= submit_tag 'Save Changes' %>
+<%= end_form_tag %>

@@ -1,0 +1,64 @@
+10
+
+dir
+939
+svn+ssh://svn.makalumedia.com/repos/wcj/branches/production/test/selenium
+svn+ssh://svn.makalumedia.com/repos/wcj
+
+
+
+2006-12-24T00:30:44.191208Z
+417
+james
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+24ebd3e6-e88e-4ea6-b995-85fbb0d99243
+
+administer_user_status
+dir
+
+author_create_group
+dir
+
+author_edit_group
+dir
+
+author_sign_up
+dir
+
+WCJ-tos.sel
+file
+
+
+
+
+2007-09-28T14:05:23.000000Z
+97ef6da8cf894224ac7514b1be04c85f
+2006-12-20T23:20:03.793436Z
+408
+james
+
+WCJ-Contact.sel
+file
+
+
+
+
+2007-09-28T14:05:23.000000Z
+446de0fc830733f40cc12a76151530fa
+2006-12-20T23:20:03.793436Z
+408
+james
+

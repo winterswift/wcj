@@ -1,0 +1,19 @@
+<li class="clearfix <%= cycle('odd', 'even') %> <%= journal.scope %>">
+  <div class="thumb"><%= link_to image_tag(avatar_or_default(journal.user)), journal.url %></div>
+  <div class="info">
+    <h2><%= link_to journal.title, journal.url, :title => journal.description %><% unless @user %> <span>by
+    <%= user = journal.user;
+        if user
+          if (User::SCOPE_PUBLIC == user.scope)
+            link_to user.login, user.url
+          else
+            user.login
+          end
+        else
+          '??'
+        end %></span><% end %></h2>
+    <p class="date-range"><%= "#{journal.start_date.strftime('%b %d, %Y')} to #{journal.end_date.strftime('%b %d, %Y')}" %></p>
+    <% unless journal.groups.blank? %><p class="groups"><%= 'in ' + journal.groups.map{ |g| link_to g.title, g.url }.to_sentence + ', ' %></p><% end %>
+    <%= render :partial => 'journals/progress', :locals => {:journal => journal} %>    
+  </div>
+</li>

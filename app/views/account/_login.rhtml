@@ -1,0 +1,29 @@
+<div id="login">
+  <h3>Already a Member?</h3>
+  <div class="content">
+    <%= start_form_tag :controller => 'account', :action => 'login' %>
+      <p class="field"><label for="account_login">Username:</label>
+      <%= text_field_tag 'login', '' %></p>
+    
+      <p class="field"><label for="account_password">Password:</label>
+      <%= password_field_tag 'password', '' %>
+      <small><%= link_to_function 'Forgot your password?', '$("login").hide();$("recover-login").show();reloadSifr();return false;' %></small></p>
+    
+      <p><%= check_box_tag 'remember_me' %> <label for="account_remember_me">Remember me</label></p>
+    
+      <p class="submit"><%= submit_tag 'Sign in' %></p>
+    <%= end_form_tag %>
+  </div>
+</div>
+
+<div id="recover-login" style="display:none">
+  <h3>Lost your password?</h3>
+  <div class="content">
+    <strong>Don't sweat, help is at hand.</strong>
+    <p>Just enter your email address and we'll generate a new password and send it to you. Remember, this has to be the email address you signed up with.</p>
+    <%= start_form_tag :controller => 'account', :action => 'recover_password' %>
+      <p><%= text_field_tag 'email', '' %></p>
+      <%= submit_tag 'Send me a password!' %> or <%= link_to_function 'Cancel', '$("recover-login").hide();$("login").show();return false;' %>
+    <%= end_form_tag %>
+  </div>
+</div>

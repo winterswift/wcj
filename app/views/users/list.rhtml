@@ -1,0 +1,18 @@
+<h1 class="nomargin">People from around WCJ</h1>
+<p class="intro">
+  Here are some of the people who are diligently writing a journal right now.
+  <% users_list = users()
+     unless users_list.include?(current_user) %>
+    <% unless logged_in? %>
+      Want to be included? <%= link_to 'Join WCJ today &raquo;', signup_url %>
+    <% end %>
+  <% else %>
+    <strong>Can you find yourself?</strong>
+  <% end %>
+</p>
+
+<ul class="list users">
+  <%= render :partial => 'users/user', :collection => users_list %>
+</ul>
+
+<%= render_pagination_links(user_pages, 'user_') %>

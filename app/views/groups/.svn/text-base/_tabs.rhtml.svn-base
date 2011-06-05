@@ -1,0 +1,13 @@
+<%#
+ Word Count Journal groups tabs
+
+ 2006-11-19  james.anderson  rss
+ %>
+
+<ul class="tabs clearfix">
+  <li class="active"><a href="#">Recently Updated</a></li>
+  <li><a href="#">All</a></li>
+  <%# <li class="rss"><a href="#{url_for(:controller=>'groups', action=>'rss')}" title="RSS Feed for Groups">RSS Feed</a></li> %>
+  <li class="rss">
+   <%= link_to( "RSS Feed", {:controller=>'groups', :action=>'rss'}, :title=>"RSS Feed for Groups") %></li>
+</ul>

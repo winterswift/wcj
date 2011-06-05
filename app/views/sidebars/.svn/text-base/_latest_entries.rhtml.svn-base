@@ -1,0 +1,16 @@
+<div id="block-entries" class="block">
+  <h3><% if is_current_user_page? %>Your latest entries<% else %>Recently written<% end %></h3>
+  <% latest_entries_params = {"entry_page_size"=> Settings.latest_entries_count,
+                              "entry_page"=> 1};
+     unless (latest_entries = entries(latest_entries_params)).blank? %>
+    <ul class="excerpts clearfix">
+      <% entries[0...5].each do |entry| %>
+        <li>
+          <%= pluralize(entry.words, 'word') %> - <%= link_to "#{entry.excerpt(4)}#{entry.words > 4 ? '...' : ''}", entry.url %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <em>No entries found</em>
+  <% end %>
+</div>

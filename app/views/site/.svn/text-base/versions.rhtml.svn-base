@@ -1,0 +1,9 @@
+<h1>Versions</h1>
+
+Up since <%= $START_TIME.strftime(Settings.format_time_format) %>.
+<dl>
+ <%  @versions.map{|pair| %>
+   <dt> <%= pair[0] %> : </dt>
+   <dd> <%= pair[1] %> </dd>
+   <% } %>
+ </dl>

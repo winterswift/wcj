@@ -1,0 +1,107 @@
+#!ruby
+#
+# Word Count Journal controller for entry calendars
+# (c) 2006 makalumedia
+# 
+# 2006-11-26  james.anderson  new (adresses #15)
+
+# the EntryCalendarController prepares the state to render a Calendar of entries, in which
+# each day is styled to indicate the entry status.
+# it supports the following states
+#  "before"
+#  "count-above"
+#  "count-below"
+#  "count-ok"
+#  "missing"
+#  "today"
+#  "future"
+#  "after"
+#  
+# the entry_class are computed by looking at the given date in the presentation context.
+# - journal#show: the style class indicates the journal's entries' respective
+# status. temporal regions are the journal start / today / journal end
+# - group#show: the style class indicates the respective status of the entries from all
+# journals in the groups. the temporal regions are the earliest journal start / today / latest journal end
+# - entry#show: the style class is the same as for the entry's journal
+#
+# this could be delegated to the journal/group instance, but would need logic to manage cached
+# bounds values.
+
+VERSIONS[__FILE__] = "$Id: entry_calendar_controller.rb 862 2007-02-05 17:28:02Z james $" 
+
+module EntryCalendarController
+
+  ENTRY_CLASS_ABOVE = "above"
+  ENTRY_CLASS_AFTER = "after"
+  ENTRY_CLASS_BEFORE = "before"
+  ENTRY_CLASS_BELOW = "below"
+  ENTRY_CLASS_FUTURE = "future"
+  ENTRY_CLASS_OK = "ok"
+  ENTRY_CLASS_TODAY = "today"
+  ENTRY_CLASS_MISSING = "missing"
+  
+  # given a group or a journal as context
+  def context_entry_class(date, context_params)
+    logger.debug("entry_class? #{date} #{context_params}")
+    entry_class = []
+    today = users_today()
+    case
+    when (group = context_params[:group])
+      case
+      when date == today
+        entry_class << ENTRY_CLASS_TODAY
+      when date < (@calendar_start_date ||= group.journals.map(&:start_date).min)
+        entry_class << ENTRY_CLASS_BEFORE
+      when date > (@calendar_end_date ||= group.journals.map(&:end_date).max)
+        entry_class << ENTRY_CLASS_AFTER
+      when date > today
+        entry_class << ENTRY_CLASS_FUTURE
+      else
+        entry_class << ENTRY_CLASS_OK
+      end
+    when (journal = context_params[:journal])
+      # puts("date: #{date} journal: [#{journal.start_date()} - #{journal.end_date()}]")
+      case
+      when date == today
+        entry_class << ENTRY_CLASS_TODAY
+      when date < (@calendar_start_date ||= journal.start_date())
+        entry_class << ENTRY_CLASS_BEFORE
+      when date > (@calendar_end_date ||= journal.end_date())
+        entry_class << ENTRY_CLASS_AFTER
+      when date > today
+        entry_class << ENTRY_CLASS_FUTURE
+      else   
+        
+      end
+    else
+      logger.warn("no entry class context: #{context_params.inspect}")
+      entry_class << ENTRY_CLASS_MISSING
+    end
+    
+    entries = journal.entries()
+    e_length = entries.length
+    entry = nil
+    entries.map{|e|
+      if (e.date == date)
+        entry = e
+      end
+    }
+    if entry
+      completion = (entry ? entry.completion_ratio() : 0.0)
+      # puts("date: #{date} entry: #{entry}/#{completion}")
+      case
+      when completion == 1.0
+        entry_class << ENTRY_CLASS_OK
+      when completion < 1.0
+        entry_class << ENTRY_CLASS_BELOW
+      when completion > 1.0
+        entry_class << ENTRY_CLASS_ABOVE
+      end
+    else
+      entry_class << ENTRY_CLASS_MISSING
+    end
+    logger.debug("entry_class #{date}: [#{entry_class.join(' ')}]")
+    entry_class.join(' ')
+  end
+  
+end

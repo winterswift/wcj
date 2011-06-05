@@ -1,0 +1,76 @@
+10
+
+dir
+939
+svn+ssh://svn.makalumedia.com/repos/wcj/branches/production/vendor/plugins/settings
+svn+ssh://svn.makalumedia.com/repos/wcj
+
+
+
+2006-12-26T13:31:30.219280Z
+445
+james
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+24ebd3e6-e88e-4ea6-b995-85fbb0d99243
+
+test
+dir
+
+doc
+dir
+
+init.rb
+file
+
+
+
+
+2007-09-28T14:05:28.000000Z
+4d47c4e88ad645806ae8592c5344201c
+2006-11-03T10:14:14.786086Z
+4
+alex
+
+lib
+dir
+
+generators
+dir
+
+MIT-LICENSE
+file
+
+
+
+
+2007-09-28T14:05:28.000000Z
+c0fbbb12f0039d5b95136003d5355cfe
+2006-11-03T10:14:14.786086Z
+4
+alex
+
+README
+file
+
+
+
+
+2007-09-28T14:05:28.000000Z
+6123362389fa374892c0f0c92240a0df
+2006-11-03T10:14:14.786086Z
+4
+alex
+

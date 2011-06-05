@@ -1,0 +1,44 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>WCJ-ASU-NO3</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">WCJ-ASU-NO3</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>link=Sign up</td>
+	<td>Sign up</td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>/users/1/journals/1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>link=Sign up</td>
+	<td>Sign up</td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>/users/1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>link=Sign up</td>
+	<td>Sign up</td>
+</tr>
+
+</tbody></table>
+</body>
+</html>

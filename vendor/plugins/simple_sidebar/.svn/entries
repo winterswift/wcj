@@ -1,0 +1,97 @@
+10
+
+dir
+939
+svn+ssh://svn.makalumedia.com/repos/wcj/branches/production/vendor/plugins/simple_sidebar
+svn+ssh://svn.makalumedia.com/repos/wcj
+
+
+
+2006-12-18T20:47:07.535917Z
+335
+alex
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+24ebd3e6-e88e-4ea6-b995-85fbb0d99243
+
+test
+dir
+
+Rakefile
+file
+
+
+
+
+2007-09-28T14:05:29.000000Z
+3067e5ce567d8ed8886fa004ddc3456e
+2006-11-03T10:14:14.786086Z
+4
+alex
+
+tasks
+dir
+
+init.rb
+file
+
+
+
+
+2007-09-28T14:05:29.000000Z
+ed6d5cafd7d4a7e770c8e38b953f1a41
+2006-11-03T10:14:14.786086Z
+4
+alex
+
+lib
+dir
+
+RELEASE_NOTES
+file
+
+
+
+
+2007-09-28T14:05:29.000000Z
+8f1d053592fd5bcb22c24aba329eca4c
+2006-11-03T10:14:14.786086Z
+4
+alex
+
+install.rb
+file
+
+
+
+
+2007-09-28T14:05:29.000000Z
+1acd22e99e64b7885430db979f174082
+2006-11-03T10:14:14.786086Z
+4
+alex
+
+README
+file
+
+
+
+
+2007-09-28T14:05:29.000000Z
+828649c7b51dbce92c0474ffd3cfe1f9
+2006-11-03T10:14:14.786086Z
+4
+alex
+

@@ -1,0 +1,15 @@
+<div id="block-comments" class="block">
+  <h3>Recent comments</h3>
+  <% case 
+     when @journal.blank? %>
+  <em> ... </em>
+  <% journal_comments = comments(:page_size=> 6)
+     # controller.logger.debug("_journal_comments: [#{comment_list.map{|c| c.id}.join(',')}]")
+     when journal_comments.blank? %>
+  <em>No comments yet on this journal</em>
+  <% else  %>
+    <ul class="excerpts clearfix">
+      <%= render :partial => 'comments/comment_short', :collection => journal_comments %>
+    </ul>
+  <% end %>
+</div>

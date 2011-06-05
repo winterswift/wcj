@@ -1,0 +1,53 @@
+<%= error_messages_for 'user' %>
+
+<% form_for :user, current_user, :html => {:multipart => true},
+            :url => {:action => 'update', :user_id => @user} do |f| -%>
+            
+  <p class="field double"><label for="name">Name <span>(first, last):</span></label>
+  <%= f.text_field :first_name %> <%= f.text_field :last_name %></p>
+  	
+  <p class="field"><label for="email">Email address <span>(must be valid - we won't spam you):</span></label>
+  <%= f.text_field :email %></p>
+  	
+  <p class="field"><label for="description">About you <span>(start with "I am"):</span></label>
+  <%= f.text_area :description, :rows => 5 %><small>Maximum length 500 characters.</small></p>
+  
+  <p class="field">
+  <label for="time_zone">Time zone <span>(where you at?):</span></label>
+  <%= time_zone_select 'user', 'time_zone', TZInfo::Timezone.all.sort, :model => TZInfo::Timezone %>
+  <small><script type="text/javascript">
+  function localTime(offset) {
+    d = new Date();
+    utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+    nd = new Date(utc + (3600000 * offset));
+    return "Your local time is " + nd.toLocaleString();
+  }
+  var date = new Date()
+  if (date.getTimezoneOffset) {    
+    var offset = (date.getTimezoneOffset() / 60) * -1;
+    document.write(localTime(offset));
+  }
+  </script></small>
+  </p>
+  
+  <div id="entry-photo" class="field clearfix">
+    <label for="avatar">Your photo <span>(under 1MB please):</span></label>
+    <%= image_tag(avatar_or_default(@user), :class => 'thumbnail') %>
+    <% if @user.new_record? || @user.avatar.blank? %>
+      <%= file_column_field 'user', 'avatar' %>
+    <% else %>
+      <div id="entry-photo-link" style="width:100px"><a href="#" onclick="$('entry-photo-field').show();Element.hide(this);return false;">Change photo &raquo;</a></div>
+      <div id="entry-photo-field" style="display:none"><%= file_column_field 'user', 'avatar' %></div>
+    <% end %>
+  </div>
+  
+  <p class="checkbox">
+    <%= f.check_box :overdue_reminders %> <label for="overdue_reminders"><strong>Send me daily reminders about missing journal entries</strong></label>
+  </p>
+  
+  <p class="checkbox">
+    <%= f.check_box :contact_permissions_news %> <label for="contact_permissions_news"><strong>Keep me informed</strong> <span>(If checked, we may periodically send you WCJ news or announcements.)</span></label>
+  </p>
+
+  <%= submit_tag 'Save Changes' %>
+<% end -%>

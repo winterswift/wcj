@@ -1,0 +1,5 @@
+Settings modified on <%= Time.now.to_s %> by <%= @user.login %>.
+
+New Settings:
+
+<%= @settings.inspect %>

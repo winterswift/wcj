@@ -1,0 +1,16 @@
+<div id="block-people" class="block">
+  <h3>Latest users</h3>
+  <% latest_users_params = {"user_page_size"=> Settings.latest_users_count,
+                            "user_page"=> 1,
+                            "require_avatar"=> true};
+     unless (users_list = users(latest_users_params)).blank? %>
+  <ul class="thumbnails clearfix">
+    <% reset_cycle %>
+    <% users_list.each do |user| %>
+      <li class="<%= cycle('left', 'center', 'center', 'right') %>"><%= link_to "#{image_tag(avatar_or_default(user))}", user.url %></li>
+    <% end %>
+  </ul>
+  <% else %>
+  <em>No users found</em>
+  <% end %>
+</div>

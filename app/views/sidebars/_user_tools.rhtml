@@ -1,0 +1,4 @@
+<div id="block-tools" class="block">
+  <% if !@user.journals.blank? && user_is_current_user? %><p><%= link_to '&raquo; <span>Start another</span> Journal', :controller => 'journals', :action => 'new', :user_id => @user %></p><% end %>
+<!--<% if !@user.groups.blank? && user_is_current_user? %><p><%= link_to '&raquo; <span>Form another</span> Group', :controller => 'groups', :action => 'new', :user_id => @user %></p><% end %>-->
+</div>

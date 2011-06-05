@@ -1,0 +1,17 @@
+Hello there,
+
+This email is from the Word Count Journal website. One of our members, <%= @group.owner.name %>, has invited you (<%= @user.email %>) to join the blogging group, '<%= @group.title %>'.
+
+To accept this invitation, click the following link:
+
+  <%= "http://#{Settings.http_host_name}/account/login/group?group_id=#{@group.id}&add_member=#{@authentication}"%>
+
+To reject this invitation, simply discard this email.
+
+Thank you very much, and we look forward to seeing you!
+
+-- The Word Count Journal Team
+
+Word Count Journal
+http://<%= Settings.http_host_name %>
+ 

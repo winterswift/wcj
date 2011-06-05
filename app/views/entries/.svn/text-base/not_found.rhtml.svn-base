@@ -1,0 +1,7 @@
+<h1>Entry not found</h1>
+
+<ul>
+ <li>user id/login: <%= (@user ? "#{@user.id().to_s()}/#{@user.login()}" : "?/?") %>
+ <li>journal id/title: <%= (@journal ? "#{@journal.id().to_s()}/'#{@journal.title()}'" : "?/?") %>
+ <li>entry date: <%= (@date ? @date.to_s() : "?") %>
+</ul>

@@ -1,0 +1,43 @@
+10
+
+dir
+939
+svn+ssh://svn.makalumedia.com/repos/wcj/branches/production/db
+svn+ssh://svn.makalumedia.com/repos/wcj
+
+
+
+2007-02-03T21:18:41.887610Z
+850
+james
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+24ebd3e6-e88e-4ea6-b995-85fbb0d99243
+
+schema.rb
+file
+
+
+
+
+2007-09-28T14:05:28.000000Z
+9325d64d078f2e1197cbec9a69eaba11
+2007-01-18T20:18:18.062870Z
+640
+webdev
+
+migrate
+dir
+

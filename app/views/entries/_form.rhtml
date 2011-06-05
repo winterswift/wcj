@@ -1,0 +1,31 @@
+<%= error_messages_for 'entry' %>
+
+<div id="progress" class="progress<% if @entry.words > @entry.words_required %> red<% elsif @entry.words == @entry.words_required %> green<% else %> yellow<% end %>" style="margin-bottom:20px">
+  <span id="completion-ratio" class="bar" style="width:<%= ((@entry.completion_ratio > 1 ? 1 : @entry.completion_ratio) * 535).round %>px;">&nbsp;</span>
+  <label><span id="words"><%= @entry.words %></span> / <span id="words-required"><%= @entry.words_required %> words</span></label>
+</div>
+
+<div id="writingpad">
+  <div id="pagecurl" style="height:<%= body_height + 25 %>px">
+    <%= text_area 'entry', 'body', :value => (@entry.new_record? ? 'Replace this text...' : @entry.body), :class => 'body' + (@entry.new_record? ? ' auto-clear' : ''), :style => "height:#{body_height}px;" %>
+  </div>
+</div>
+
+<script type="text/javascript">
+  var googie = new GoogieSpell("/images/googiespell/", "/spell/check?lang=");
+  googie.decorateTextarea("entry_body");
+</script>
+
+<div id="entry-photo" class="field clearfix">
+  <label>You can also attach a photo to this journal entry:</label>
+  <%= image_tag(photo_or_default(@entry, :thumb), :class => 'thumbnail') %>
+  <% if @entry.new_record? || @entry.photo.blank? %>
+    <%= file_column_field 'entry', 'photo' %>
+  <% else %>
+    <div id="entry-photo-link" style="width:100px"><a href="#" onclick="$('entry-photo-field').show();Element.hide(this);return false;">Change photo &raquo;</a></div>
+    <div id="entry-photo-field" style="display:none"><%= file_column_field 'entry', 'photo' %></div>
+  <% end %>
+</div>
+
+<p class="field"><label for="entry_state">State <span>(is it ready?):</span></label>
+<%= radio_button 'entry', 'state', 'published', :checked => true %> Published &nbsp; <%= radio_button 'entry', 'state', 'draft' %> Draft</p>

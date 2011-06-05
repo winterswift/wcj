@@ -1,0 +1,5 @@
+<% unless @entry.blank? || @entry.photo.blank? %>
+<div id="block-photo" class="block">
+  <%= @entry.photo ? link_to(image_tag(photo_or_default(@entry, 'medium')), photo_or_default(@entry)) : image_tag('oneone/photo-medium.png') %>
+</div>
+<% end %>

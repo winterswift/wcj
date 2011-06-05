@@ -1,0 +1,28 @@
+<% entries_list = entries({:entry_page_size => 9999, :fill_entries => false}) %>
+<ul id="controls" class="clearfix">
+  <li class="sort">Sort: </li>
+  <li><% if page_sort_order['order'] == :desc %><span>New to old</span><% else %><%= link_to 'New to old', '?entry_sort[column]=date&entry_sort[order]=desc' %><% end %></li>
+  <li><% if page_sort_order['order'] == :asc %><span>Old to new</span><% else %><%= link_to 'Old to new', '?entry_sort[column]=date&entry_sort[order]=asc' %><% end %></li>
+  <li class="toggle"><%= link_to_function 'Print', 'window.print()' %></li>
+  <li class="toggle"><%= check_box_tag 'hide_pictures', true, false, :onclick => "toggleClassName('list', 'hide-pictures')" %> <label for="hide_pictures">Hide pictures</label></li>
+  <li class="toggle"><%= check_box_tag 'concatenate', true, false, :onclick => "toggleClassName('list', 'concatenated')" %> <label for="concatenate">Concatenate</label></li>
+</ul>
+
+<div id="header" class="clearfix">
+  <div id="journal">
+    <h1><%= @journal.title %></h1>
+    <p><%= @journal.description %></p>
+  </div>
+  
+  <div id="profile">
+    <div class="thumb"><%= image_tag(avatar_or_default(@user)) %></div>
+    <h3><%= @user.login %></h3>
+    <p><%= @user.description %></p>
+  </div>
+</div>
+
+<% unless entries_list.blank? %>
+<ul id="list">
+  <%= render :partial => 'entries/entry_print', :collection => entries_list %>
+</ul>
+<% end %>

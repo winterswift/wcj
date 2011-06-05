@@ -1,0 +1,17 @@
+<div id="block-intro" class="block highlighted">
+  <h3>Hey journal writers</h3>
+  <div class="content clearfix">
+    <p>We are a community of <strong><%= link_to "#{format_number(User.count)} authors", users_url %></strong>, writing away on
+    <%= link_to "#{format_number(Journal.count)} journals", journals_url %>. We have made <%= format_number(Comment.count) %> comments and have
+    uploaded <%= format_number(Entry.count(:all, :conditions => "photo != ''")) %> photos. We have <%= link_to "#{format_number(Group.count)} writing groups", groups_url %>,
+    including some private school groups.</p>
+
+    <p>We have written a total of <strong><%= format_number(site_statistics[:words]) %> words</strong> &ndash; <strong><%= format_number((site_statistics[:words] / 3000000.0) * 100) %>%</strong> of the way to the <strong>3 million word milestone</strong>!</p>
+
+    <p>We started this site so that we could work on our writing. We would love
+    to hear why you use the site and what you think about it. Please send us
+    <%= link_to 'your comments', contact_url %>.</p>
+
+    <p>Your friends at WCJ &ndash; <em>Write Away!</em></p>
+  </div>
+</div>

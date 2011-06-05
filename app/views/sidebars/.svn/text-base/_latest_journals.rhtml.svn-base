@@ -1,0 +1,16 @@
+<div id="block-journals" class="block">
+  <h3>Latest journals</h3>
+  <% latest_journals_params = {"journal_page_size"=> Settings.latest_journals_count,
+                               "journal_page"=> 1};
+     unless (latest_journals = journals(latest_journals_params)).blank? %>
+    <ul class="excerpts clearfix">
+      <% latest_journals.each do |journal| %>
+        <li>
+          <%= link_to journal.title, journal.url %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <em>No journals found</em>
+  <% end %>
+</div>

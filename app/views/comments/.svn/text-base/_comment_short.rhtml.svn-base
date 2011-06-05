@@ -1,0 +1,9 @@
+<li><%= (user = comment_short.user) ? user.login : "?" %> -
+    <%= if (commentable = comment_short.commentable)
+          link_to((word_count(strip_tags(comment_short.comment)) > 4 ?
+                   "#{truncate_words(strip_tags(comment_short.comment), 4)}..." :
+                    strip_tags(comment_short.comment)),
+                  "#{comment_short.commentable.url}#comment-#{comment_short.id}")
+        else
+          "#{truncate_words(strip_tags(comment_short.comment), 4)}..."
+        end %></li>

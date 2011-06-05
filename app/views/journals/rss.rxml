@@ -1,0 +1,22 @@
+# c 2006 makalumedia
+# author james.anderson@makalumedia.com
+# 
+# rss feed file for WordCountJournal journals
+# implemented based on FeedTools
+# 
+# 20061115 james.anderson initial
+# 
+  feed = feed = FeedTools::Feed.new
+  feed.title = "Word Count Journal"
+  feed.subtitle = "Journals"
+  feed.author.name = "Miscellaneous Authors"
+  feed.link = url_for(:controller=>"journals", :action=>"list")
+    journals().each { |journal|
+      entry = FeedTools::FeedItem.new
+      feed.entries << entry
+      entry.title = journal.title
+      entry.content = journal.description
+      entry.link = journal.url()
+      }
+
+  feed.build_xml("rss", 1.0, xml);

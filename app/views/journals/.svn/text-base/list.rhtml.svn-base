@@ -1,0 +1,26 @@
+<h1 class="nomargin"><%= "#{@user.login}'s " if @user %>Journals</h1>
+<ul class="buttons clearfix">
+  <li class="sort label">Sort: </li>
+  <li class="sort">
+    <% if !params[:journal_sort] || params[:journal_sort][:column] == 'updated' %>
+      <span>Recently Updated</span>
+    <% else %>
+      <%= link_to 'Recently Updated', "?#{'journal_page=' + params[:journal_page] + '&' if params.has_key?(:journal_page) }journal_sort[column]=updated&journal_sort[order]=desc" %>
+    <% end %>
+  </li>
+  <li class="sort">
+    <% if params[:journal_sort] && params[:journal_sort][:column] == 'title' %>
+      <span>Alphabetically</span>
+    <% else %>
+      <%= link_to 'Alphabetically', "?#{'journal_page=' + params[:journal_page] + '&' if params.has_key?(:journal_page) }journal_sort[column]=title&journal_sort[order]=asc" %>
+    <% end %>
+  </li>
+</ul>
+<%= render :partial => 'journals/tabs' %>
+<ul id="journals" class="list journals">
+  <%= list_journals_params = {"journal_page_size"=> Settings.list_journals_count};
+     journals_list = journals()
+     render :partial => 'journals/journal', :collection => journals %>
+</ul>
+
+<%= render_pagination_links(journal_pages, 'journal_') %>

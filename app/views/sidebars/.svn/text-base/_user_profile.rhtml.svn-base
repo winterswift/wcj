@@ -1,0 +1,17 @@
+<% unless @user.blank? %>
+<div id="block-profile" class="block highlighted">
+  <h3><%=h @user.login %></h3>
+  <div class="content clearfix">
+    <%= image_tag avatar_or_default(@user) %>
+    <div class="info">
+      <p><%=h @user.description %></p>
+      <%= link_to '<strong>Edit your profile &raquo;</strong>', :controller => 'users', :action => 'edit', :id => @user.id if user_is_current_user? %>
+    </div>
+    <% if current_user_is_admin? %>
+    <form method="post" action="/users/<%= @user.id %>/destroy">
+      <%= submit_tag 'Delete this user and all journals' %>
+    </form>
+    <% end %>
+  </div>
+</div>
+<% end %>

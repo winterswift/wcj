@@ -1,0 +1,5 @@
+<div id="block-words" class="block highlighted">
+  <div class="content clearfix">
+    <strong><%= format_number(site_statistics[:words]) %> words and counting...</strong>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+<div id="intro" style="margin-bottom:25px">
+  <h1>Welcome <%= current_user.login %>! Looks like you're new in town</h1>
+  <p>You might be new around here, or maybe you just haven't had a chance to find your way around WCJ just yet. No worries. Getting started is easy:</p>
+  <ul>
+    <li><%= link_to 'Edit your account and user profile &raquo;',
+            user_operation_url(:controller => 'users', :action => 'edit', :user_id => current_user.id) %></li>
+    
+    <li><%= link_to 'Go ahead an create your first journal &raquo;', :controller => 'journals', :action => 'new', :user_id => current_user %></li>
+  </ul>
+</div>
+

@@ -1,0 +1,21 @@
+<h1>Settings</h1>
+
+<table>
+ <tr><th>setting</th><th>value</th></tr>
+ <% @settings.map{|pair| %>
+   <tr padding='1'>
+    <td style='text-align: right;'><%= pair[0] %></td>
+    <td><form action='/site/update'>
+        <%= value = pair[1]
+            case value
+            when Hash
+              value.inspect
+            else
+              value = value.to_s
+              "<input type='hidden' name='name' value='#{pair[0]}' />
+               <input id='value' name='value' type='text' value='#{value}' size='#{[32,pair[1].to_s.length+2].max}'/>" 
+            end %>
+        </form></td>
+    </tr>
+   <% } %>
+ </table>

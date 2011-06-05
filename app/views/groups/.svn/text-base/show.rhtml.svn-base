@@ -1,0 +1,38 @@
+<h1 class="nomargin"><%=h @group.title %></h1>
+<ul class="buttons clearfix">
+  <li class="sort label">Sort: </li>
+  <li class="sort">
+    <% if !params[:journal_sort] || params[:journal_sort][:column] == 'updated' %>
+      <span>Recently Updated</span>
+    <% else %>
+      <%= link_to 'Recently Updated', '?journal_sort[column]=updated&journal_sort[order]=desc' %>
+    <% end %>
+  </li>
+  <li class="sort">
+    <% if params[:journal_sort] && params[:journal_sort][:column] == 'title' %>
+      <span>Alphabetically</span>
+    <% else %>
+      <%= link_to 'Alphabetically', '?journal_sort[column]=title&journal_sort[order]=asc' %>
+    <% end %>
+  </li>
+  <% if logged_in? %>
+    <% if user_is_current_user?(@group.owner) %><li class="edit"><%= link_to "Edit", @group.url_hash.merge(:action => 'edit') %></li><% end %>
+    <% if !@group.users.include?(current_user) %>
+    <li class="join">
+      <%= link_to 'Join this group', @group.url_hash.merge(:action => 'add_member', :member_id => current_user.id) %>
+    </li>
+    <% elsif !user_is_current_user?(@group.owner) %>
+    <li class="leave">
+      <%= link_to 'Leave this group', @group.url_hash.merge(:action => 'remove_member', :member_id => current_user.id) %>
+    </li>
+    <% end %>
+  <% end %>
+</ul>
+<% unless (journals_list = journals()).blank? %>
+<ul class="list journals">
+  <%= render :partial => 'journals/journal', :collection => journals_list %>
+</ul>
+<%= render_pagination_links(journal_pages, 'group_journal_') %>
+<% else %>
+  <em>This group does not have any journals yet.</em>
+<% end %>

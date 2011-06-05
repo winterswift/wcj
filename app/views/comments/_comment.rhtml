@@ -1,0 +1,16 @@
+<li class="clearfix<%= user_is_current_user?(comment.user) ? ' author' : '' %> <%= cycle 'odd', 'even' %>">
+  <a name="comment-<%= comment.id %>"></a>
+  <%= image_tag avatar_or_default(comment.user), :class => 'thumbnail' %>
+  <span><%= format_time comment.created_at, :format => '%b %d, %Y' %> by
+    <%= user = comment.user;
+        if user
+          if (User::SCOPE_PUBLIC == user.scope)
+            link_to user.login, user.url
+          else
+            user.login
+          end
+        else
+          '??'
+        end %></span>
+  <p><%= comment.comment %></p>
+</li>

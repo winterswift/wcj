@@ -1,0 +1,22 @@
+# c 2006 makalumedia
+# author james.anderson@makalumedia.com
+# 
+# rss feed file for WordCountJournal groups
+# implemented based on FeedTools
+# 
+# 20061115 james.anderson initial
+# 
+    feed = feed = FeedTools::Feed.new
+    feed.title = "Word Count Journal"
+    feed.subtitle = "Groups"
+    feed.author.name = "Miscellaneous Authors"
+    feed.link = url_for(:controller=>"groups", :action=>"list")
+    @groups.each { |group|
+      entry = FeedTools::FeedItem.new
+      feed.entries << entry
+      entry.title = group.title
+      entry.content = group.description
+      entry.link = group.url()
+      }
+
+    feed.build_xml("rss", 1.0, xml);

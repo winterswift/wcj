@@ -1,0 +1,3 @@
+<div id="block-adsense" class="block">
+  <%= image_tag 'adsense/250x250.gif' %>
+</div>

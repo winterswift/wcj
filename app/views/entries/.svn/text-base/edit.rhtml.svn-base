@@ -1,0 +1,6 @@
+<h1><%= @entry.date_formatted %></h1>
+
+<%= start_form_tag({:action => 'update'}, {:multipart => true}) %>
+  <%= render :partial => 'form' %>
+  <%= submit_tag 'Save Changes' %>
+<%= end_form_tag %>

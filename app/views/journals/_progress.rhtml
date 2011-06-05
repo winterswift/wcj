@@ -1,0 +1,6 @@
+<div class="progress<% if journal.entry_days != journal.running_days %> red<% elsif journal.words_total != journal.running_words_required %> yellow<% end %>">
+  <% if journal.entry_days > 0 %>
+  <span class="bar" style="width:<%= ((journal.entry_days / journal.days) * 470).round %>px;">&nbsp;</span>
+  <% end %>
+  <label><%= days_to_go(journal) %></label>
+</div>

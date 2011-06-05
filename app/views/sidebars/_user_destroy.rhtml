@@ -1,0 +1,7 @@
+<div class="block">
+  <h3>Delete your account?</h3>
+  <div class="content">
+    <p>Deleting your account immediately and permanently deletes all the journals, groups, entries and comments associated with your account. There is no undo so make sure you're absolutely sure you want to delete your account.</p>
+    <%= link_to 'I understand - delete my account &raquo;', @user.url_hash.merge(:action => 'destroy'), :confirm => 'Are you sure you want to permanently delete your account?\n\nThis action can not be undone.', :class => 'destroy', :post => true %>
+  </div>
+</div>

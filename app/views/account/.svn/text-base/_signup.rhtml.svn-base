@@ -1,0 +1,31 @@
+<%= error_messages_for 'user' %>
+  
+<%= start_form_tag({:controller => 'account', :action => 'signup'}, {:name => 'signupform', :id => 'signupform'}) %>
+  <p class="field"><label for="login">Email address:</label>
+  <%= text_field 'user', :email %> <span>must be valid - we won't spam you</span></p>
+  
+  <p class="field"><label for="password">Desired Username:</label>
+  <%= text_field 'user', :login %> <span>letters and numbers only - will be public</span></p>
+  
+  <p class="field"><label for="password">Password:</label>
+  <%= password_field 'user', :password %> <span>at least 5 characters, no spaces</span><br />
+  <%= password_field 'user', :password_confirmation %> <span>repeat the password</span></p>
+  
+  <%= hidden_field_tag 'utc_offset' %>
+  <script type="text/javascript">
+  function localTime(offset) {
+    d = new Date();
+    utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+    nd = new Date(utc + (3600000 * offset));
+    return nd.toLocaleString();
+  }
+  function setInputTimezone() {
+    var date = new Date();
+    var offset = (date.getTimezoneOffset() / 60) * -1;
+    document.signupform.utc_offset.value = (date.getTimezoneOffset() * -60);
+  }
+  setInputTimezone();
+  </script>
+  
+  <p class="submit"><%= submit_tag 'Sign up' %></p>
+<%= end_form_tag %>

@@ -1,0 +1,172 @@
+#
+# 2006-11-20  james.anderson  testing private groups
+# 2006-12-10  james.anderson  made email valid in order test group enrollment.
+
+anauthor:
+  id: 1
+  login: anauthor
+  first_name: an
+  last_name: author
+  email: wcj-test@wordcountjournal.com
+  # salt: 7e3041ebc2fc05a40c60028e2c4901a81035d3cd
+  # crypted_password: 00742970dc9e6319f8019fd54864d3ea740f04b1 # test
+  crypted_password: <%= User.encrypt("test") %>
+  #crypted_password: "ce2/iFrNtQ8=\n" # quentin, use only if you're using 2-way encryption
+  created_at: <%= 5.days.ago.to_s :db %>
+  # activated_at: <%= 5.days.ago.to_s :db %> # only if you're activating new signups
+  state: "active"
+  scope: "public"
+  description: "this is an author"
+  avatar: <%= ImagesController::initialize_fixture_avatar(1) %>
+anadmin:
+  id: 2
+  login: <%= User::ADMIN_LOGIN %>
+  first_name: an
+  last_name: administrator
+  email: wcj-test@wordcountjournal.com
+  # salt: 7e3041ebc2fc05a40c60028e2c4901a81035d3cd
+  crypted_password: <%= User.encrypt("test") %>
+  # activation_code: aaronscode # only if you're activating new signups
+  created_at: <%= 1.days.ago.to_s :db %>
+  state: "active"
+  scope: "private"
+  description: "this is an adminstrator"
+  avatar: <%= ImagesController::initialize_fixture_avatar(2) %>
+reader1:
+  id: 3
+  login: reader1
+  first_name: reader
+  last_name: one
+  email: wcj-test@wordcountjournal.com
+  # salt: 7e3041ebc2fc05a40c60028e2c4901a81035d3cd
+  crypted_password: <%= User.encrypt("test") %>
+  # activation_code: aaronscode # only if you're activating new signups
+  created_at: <%= 1.days.ago.to_s :db %>
+  state: "active"
+  scope: "public"
+  description: "this is a reader. should be a member of group1"
+  avatar: <%= ImagesController::initialize_fixture_avatar(3) %>
+reader2:
+  id: 4
+  login: reader2
+  first_name: reader
+  last_name: two
+  email: wcj-test@wordcountjournal.com
+  # salt: 7e3041ebc2fc05a40c60028e2c4901a81035d3cd
+  crypted_password: <%= User.encrypt("test") %>
+  # activation_code: aaronscode # only if you're activating new signups
+  created_at: <%= 1.days.ago.to_s :db %>
+  state: "active"
+  scope: "public"
+  description: "this is a reader"
+  avatar: <%= ImagesController::initialize_fixture_avatar(4) %>
+reader3:
+  id: 5
+  login: reader3
+  first_name: reader
+  last_name: three
+  email: wcj-test@wordcountjournal.com
+  # salt: 7e3041ebc2fc05a40c60028e2c4901a81035d3cd
+  crypted_password: <%= User.encrypt("test") %>
+  # activation_code: aaronscode # only if you're activating new signups
+  created_at: <%= 1.days.ago.to_s :db %>
+  state: "active"
+  scope: "public"
+  description: "this is a reader"
+  avatar: <%= ImagesController::initialize_fixture_avatar(5) %>
+reader4:
+  id: 6
+  login: reader4
+  first_name: reader
+  last_name: four
+  email: wcj-test@wordcountjournal.com
+  # salt: 7e3041ebc2fc05a40c60028e2c4901a81035d3cd
+  crypted_password: <%= User.encrypt("test") %>
+  # activation_code: aaronscode # only if you're activating new signups
+  created_at: <%= 1.days.ago.to_s :db %>
+  state: "active"
+  scope: "private"
+  description: "this is a private reader"
+  avatar: <%= ImagesController::initialize_fixture_avatar(6) %>
+reader5:
+  id: 7
+  login: reader5
+  first_name: reader
+  last_name: five
+  email: wcj-test@wordcountjournal.com
+  # salt: 7e3041ebc2fc05a40c60028e2c4901a81035d3cd
+  crypted_password: <%= User.encrypt("test") %>
+  # activation_code: aaronscode # only if you're activating new signups
+  created_at: <%= 1.days.ago.to_s :db %>
+  state: "active"
+  scope: "public"
+  description: "this is a reader"
+  avatar: <%= ImagesController::initialize_fixture_avatar(7) %>
+reader6:
+  id: 8
+  login: reader6
+  first_name: reader
+  last_name: six
+  email: wcj-test@wordcountjournal.com
+  # salt: 7e3041ebc2fc05a40c60028e2c4901a81035d3cd
+  crypted_password: <%= User.encrypt("test") %>
+  # activation_code: aaronscode # only if you're activating new signups
+  created_at: <%= 1.days.ago.to_s :db %>
+  state: "active"
+  scope: "public"
+  description: "this is a reader"
+  avatar: <%= ImagesController::initialize_fixture_avatar(7) %>
+reader7:
+  id: 9
+  login: reader7
+  first_name: reader
+  last_name: seven
+  email: wcj-test@wordcountjournal.com
+  # salt: 7e3041ebc2fc05a40c60028e2c4901a81035d3cd
+  crypted_password: <%= User.encrypt("test") %>
+  # activation_code: aaronscode # only if you're activating new signups
+  created_at: <%= 1.days.ago.to_s :db %>
+  state: "active"
+  scope: "public"
+  description: "this is a reader."
+  avatar: <%= ImagesController::initialize_fixture_avatar(8) %>
+reader8:
+  id: 10
+  login: reader8
+  first_name: reader
+  last_name: eight
+  email: wcj-test@wordcountjournal.com
+  # salt: 7e3041ebc2fc05a40c60028e2c4901a81035d3cd
+  crypted_password: <%= User.encrypt("test") %>
+  # activation_code: aaronscode # only if you're activating new signups
+  created_at: <%= 1.days.ago.to_s :db %>
+  state: "active"
+  scope: "public"
+  description: "this is a reader. there is no avatar."
+reader9:
+  id: 11
+  login: reader9
+  first_name: reader
+  last_name: nine
+  email: wcj-test@wordcountjournal.com
+  # salt: 7e3041ebc2fc05a40c60028e2c4901a81035d3cd
+  crypted_password: <%= User.encrypt("test") %>
+  # activation_code: aaronscode # only if you're activating new signups
+  created_at: <%= 1.days.ago.to_s :db %>
+  state: "active"
+  scope: "public"
+  description: "this is a reader. there is no avatar."
+reader10:
+  id: 12
+  login: reader10
+  first_name: reader
+  last_name: ten
+  email: wcj-test@wordcountjournal.com
+  # salt: 7e3041ebc2fc05a40c60028e2c4901a81035d3cd
+  crypted_password: <%= User.encrypt("test") %>
+  # activation_code: aaronscode # only if you're activating new signups
+  created_at: <%= 1.days.ago.to_s :db %>
+  state: "active"
+  scope: "public"
+  description: "this is a reader. there is no avatar."
+  

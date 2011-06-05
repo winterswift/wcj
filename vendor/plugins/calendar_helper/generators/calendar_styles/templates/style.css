@@ -1,0 +1,94 @@
+/*
+  AUTHOR: Geoffrey Grosenbach http://nubyonrails.com
+*/
+
+.calendar {
+  margin: auto;
+}
+
+.calendar .icon {
+  border: 0;
+  padding: 0 5px;
+}
+
+.calendar img {
+  vertical-align: middle;
+  border: 0;
+}
+
+.calendarName th {
+  font-weight: bold;
+  text-align: right;
+  padding-top: 1em;
+  padding-bottom: 0.7em;
+}
+
+.dayName th {
+  font-size: 0.7em;
+  padding-top: 0.6em;
+  padding-bottom: 0.3em;
+  background-color: #303030;
+  color: white;
+}
+
+.monthName {
+  font-size: 0.7em;
+  font-weight: bold;
+  text-align: right;
+  background-color: #303030;
+  padding-left: 0.3em;
+  padding-right: 0.3em;
+  color: white;
+}
+
+.yearCalendar .otherMonth, .yearCalendar .day, .yearCalendar .specialDay {
+  padding: 0.18em 0.35em;
+  font-size: 0.9em;
+}
+
+.otherMonth, .day, .specialDay {
+  padding: 0.7em 1em;
+  border-right: 1px solid white;
+
+}
+
+.otherMonth {
+  color: #eeeeee;
+  background-color: white !important;
+}
+
+.day, .specialDay {
+  text-align: center;
+  border-bottom: 1px dotted #bbbbbb;
+  background-color: <%= colors['normalDay'] %>;
+}
+.specialDay {
+  background-color: <%= colors['specialDay'] %> !important;
+  color: white;
+}
+.specialDay a, .specialDay a:visited, .specialDay a:hover {
+  color: white;
+  text-decoration: none;
+  padding: 1em;
+}
+.specialDay a:hover {
+  color: white;
+  background-color: black;
+}
+.weekendDay {
+  background-color: <%= colors['weekendDay'] %>;
+}
+
+.normalDayFirst {
+  background: url(/images/calendar/normalDayFirst.gif) top right no-repeat;
+}
+.normalDayLast {
+  background: url(/images/calendar/normalDayLast.gif) top right no-repeat;
+}
+
+.weekendDayFirst {
+  background: url(/images/calendar/weekendDayFirst.gif) top right no-repeat;
+}
+.weekendDayLast {
+  background: url(/images/calendar/weekendDayLast.gif) top right no-repeat;
+}

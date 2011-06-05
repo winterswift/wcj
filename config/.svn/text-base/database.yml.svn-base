@@ -1,0 +1,23 @@
+development:
+  adapter: mysql
+  database: wcj
+  encoding: utf8
+  username: root
+  password: root
+  host: localhost
+
+test:
+  adapter: mysql
+  database: wcj
+  encoding: utf8
+  username: root
+  password: root
+  host: localhost
+
+production:
+  adapter: mysql
+  database: wcj_production
+  encoding: utf8
+  username: root
+  password: root
+  host: localhost

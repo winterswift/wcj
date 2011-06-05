@@ -1,0 +1,85 @@
+10
+
+dir
+939
+svn+ssh://svn.makalumedia.com/repos/wcj/branches/production/vendor/plugins/acts_as_urlnameable
+svn+ssh://svn.makalumedia.com/repos/wcj
+
+
+
+2006-11-03T10:14:14.786086Z
+4
+alex
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+24ebd3e6-e88e-4ea6-b995-85fbb0d99243
+
+test
+dir
+
+LICENSE
+file
+
+
+
+
+2007-09-28T14:05:30.000000Z
+a22f8ef4dd0088420936122f095ee5c2
+2006-11-03T10:14:14.786086Z
+4
+alex
+
+Rakefile
+file
+
+
+
+
+2007-09-28T14:05:30.000000Z
+507d42eea48672d55f21717e4107c674
+2006-11-03T10:14:14.786086Z
+4
+alex
+
+doc
+dir
+
+init.rb
+file
+
+
+
+
+2007-09-28T14:05:30.000000Z
+dbb0ce43f88d1c4fc0f78bde53340e0b
+2006-11-03T10:14:14.786086Z
+4
+alex
+
+lib
+dir
+
+README
+file
+
+
+
+
+2007-09-28T14:05:30.000000Z
+05facfb01cdf4c46de1d5f9eb58eacf6
+2006-11-03T10:14:14.786086Z
+4
+alex
+

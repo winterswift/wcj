@@ -1,0 +1,31 @@
+<h1>Listing entries</h1>
+
+<table>
+  <tr>
+  <% for column in Entry.content_columns %>
+    <th><%= column.human_name %></th>
+  <% end %>
+  </tr>
+
+<% for entry in controller.entries() %>
+  <tr>
+  <% for column in Entry.content_columns %>
+    <td><%=h entry.send(column.name) %></td>
+  <% end %>
+    <td><%= link_to('Show', url_for({:action=> 'show'}.merge(entry.url_hash)))%></td>
+    <% if (current_user && (current_user.is_admin? || entry.journal.owner == current_user)) %>
+    <td><%= link_to('Edit', url_for({:action=> 'edit'}.merge(entry.url_hash))) %></td>
+    <td><%= link_to('Destroy', url_for({:action=> 'destroy'}.merge(entry.url_hash)), :confirm => 'Are you sure?', :post => true) %></td>
+    <% else %>
+    <td /> <td />
+    <% end %>
+  </tr>
+<% end %>
+</table>
+
+<%= link_to 'Previous page', { :page => controller.entry_pages.current.previous } if controller.entry_pages.current.previous %>
+<%= link_to 'Next page', { :page => controller.entry_pages.current.next } if controller.entry_pages.current.next %> 
+
+<br />
+
+<%= link_to 'New entry', :action => 'new' %>

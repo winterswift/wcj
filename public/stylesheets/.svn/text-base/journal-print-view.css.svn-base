@@ -1,0 +1,109 @@
+body {
+  margin: 20px;
+  padding: 10px 0 0 0;
+  color: #383D44;
+  font: 10pt/1.4 Helvetica, Arial, sans-serif;
+  text-align: center;
+}
+
+div#wrapper {
+  width: 700px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+div#breadcrumb {
+  margin-bottom: 20px;
+  font-size: 92%;
+}
+  div#breadcrumb a { color: #1F7083; text-decoration: none; }
+  div#breadcrumb a:hover { color: #383D44; }
+
+ul#controls {
+  margin: 0 0 25px 0;
+  padding: 5px 15px;
+  list-style: none;
+  line-height: 1.6;
+  background: #E3F4F9;
+}
+  ul#controls li {
+    float: left;
+    margin-right: 8px;
+  }
+    ul#controls li a {
+      color: #1F7083;
+      font-weight: bold;
+    }
+    ul#controls li span { font-weight: bold; }
+  ul#controls li.toggle { float: right; margin-right: 0; margin-left: 15px; }
+    ul#controls li.toggle input {
+      float: left;
+      margin-right: 5px;
+    }
+
+div#header {
+  margin-bottom: 25px;
+  padding-bottom: 25px;
+  border-bottom: 1px solid #aaa;
+}
+
+div#journal {
+  float: left;
+  width: 425px;
+}
+  div#journal h1 {
+    margin: 0;
+    padding: 0;
+  }
+  div#journal p {
+    margin: 0;
+    font-size: 117%;
+  }
+
+div#profile {
+  float: right;
+  width: 228px;
+  padding: 10px;
+  border: 1px solid #aaa;
+  background: #f1f1f1;
+}
+  div#profile img {
+    float: left;
+    width: 75px;
+    margin-right: 10px;
+  }
+  div#profile h3 {
+    margin: 0 0 5px 0;
+  }
+
+ul#list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  clear: both;
+}
+  ul#list li { margin-bottom: 10px; }
+    ul#list li img { float: right; width: 200px; margin-left: 10px; }
+    ul#list li h4 { margin: 0 0 5px 0; }
+    ul#list li p { margin-top: 0; padding-top: 0; }
+  ul#list.hide-pictures li {  }
+    ul#list.hide-pictures li img { display: none; }
+  ul#list.concatenated li { display: inline; }
+    ul#list.concatenated li h4 { display: none; }
+    ul#list.concatenated li p { display: inline; }
+    
+    
+.clearfix:after {
+  content: "."; 
+  display: block; 
+  height: 0; 
+  clear: both; 
+  visibility: hidden;
+}
+
+.clearfix {display: inline-block;}
+
+/* Hides from IE-mac \*/
+* html .clearfix {height: 1%;}
+.clearfix {display: block;}
+/* End hide from IE-mac */

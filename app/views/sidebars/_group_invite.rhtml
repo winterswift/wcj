@@ -1,0 +1,12 @@
+<% if !@group.blank? && user_is_current_user?(@group.owner) %>
+<div id="block-group-invite" class="block">
+  <h3>Invite people to this group</h3>
+  <div class="content">
+  <%= form_tag @group.url_hash.merge(:action => 'invite') %>
+    <p class="field"><label for="email">Enter email addresses or user names <span>(one per line)</span>:</label>
+    <%= text_area_tag 'email', (@email || ''), :rows => 3 %></p>
+    <%= submit_tag 'Send Invites' %>
+  <%= end_form_tag %>
+  </div>
+</div>
+<% end %>

@@ -1,0 +1,202 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+# 2006-11-26  james.anderson  completion factor (adresses #15)
+
+e1:
+  id: 1
+  journal_id: 1
+  body: "first entry text"
+  body_filtered: "first filtered text"
+  state: "published"
+  date: <%= 10.days.ago.to_s :db %>
+  created_by: 1
+  created_at: <%= 10.days.ago.to_s :db %>
+  updated_by: 1
+  updated_at: <%= 10.days.ago.to_s :db %>
+e2:
+  id: 2
+  journal_id: 1
+  body: "second entry text"
+  body_filtered: "second filtered text"
+  state: "published"
+  date: <%= 9.days.ago.to_s :db %>
+  created_by: 1
+  created_at: <%= 9.days.ago.to_s :db %>
+  updated_by: 1
+  updated_at: <%= 9.days.ago.to_s :db %>
+e3:
+  id: 3
+  journal_id: 1
+  body: "third entry text"
+  body_filtered: "third entry text"
+  state: "published"
+  date: <%= 8.days.ago.to_s :db %>
+  created_by: 1
+  created_at: <%= 8.days.ago.to_s :db %>
+  updated_by: 1
+  updated_at: <%= 8.days.ago.to_s :db %>
+e4:
+  id: 4
+  journal_id: 1
+  body: "fourth entry text"
+  body_filtered: "fourth filtered text"
+  state: "published"
+  date: <%= 7.days.ago.to_s :db %>
+  created_by: 1
+  created_at: <%= 7.days.ago.to_s :db %>
+  updated_by: 1
+  updated_at: <%= 7.days.ago.to_s :db %>
+e5:
+  id: 5
+  journal_id: 1
+  body: "fifth entry text"
+  body_filtered: "fifth filtered text"
+  state: "published"
+  date: <%= 5.days.ago.to_s :db %>
+  created_by: 1
+  created_at: <%= 5.days.ago.to_s :db %>
+  updated_by: 1
+  updated_at: <%= 5.days.ago.to_s :db %>
+e6:
+  id: 6
+  journal_id: 1
+  body: "sixth entry text"
+  body_filtered: "sixth filtered text"
+  state: "published"
+  date: <%= 4.days.ago.to_s :db %>
+  created_by: 1
+  created_at: <%= 4.days.ago.to_s :db %>
+  updated_by: 1
+  updated_at: <%= 4.days.ago.to_s :db %>
+e7:
+  id: 7
+  journal_id: 1
+  body: "seventh entry text"
+  body_filtered: "seventh filtered text"
+  state: "published"
+  date: <%= 3.days.ago.to_s :db %>
+  created_by: 1
+  created_at: <%= 3.days.ago.to_s :db %>
+  updated_by: 1
+  updated_at: <%= 3.days.ago.to_s :db %>
+e8:
+  id: 8
+  journal_id: 1
+  body: "eight entry text"
+  body_filtered: "eight filtered text"
+  state: "published"
+  date: <%= 2.days.ago.to_s :db %>
+  created_by: 1
+  created_at: <%= 2.days.ago.to_s :db %>
+  updated_by: 1
+  updated_at: <%= 2.days.ago.to_s :db %>
+e9:
+  id: 9
+  journal_id: 1
+  body: "ninth entry text"
+  body_filtered: "ninth filtered text"
+  state: "published"
+  date: <%= 1.days.ago.to_s :db %>
+  created_by: 1
+  created_at: <%= 1.days.ago.to_s :db %>
+  updated_by: 1
+  updated_at: <%= 1.days.ago.to_s :db %>
+eSite1:
+  id: 10
+  journal_id: 4
+  body: "site entry 1"
+  body_filtered: "site entry 1 filtered"
+  state: "published"
+  date: <%= 5.days.ago.to_s :db %>
+  created_by: 2
+  created_at: <%= 10.days.ago.to_s :db %>
+  updated_by: 2
+  updated_at: <%= 10.days.ago.to_s :db %>
+eSite2:
+  id: 11
+  journal_id: 4
+  body: "site entry 2"
+  body_filtered: "site entry 2 filtered"
+  state: "published"
+  date: <%= 4.days.ago.to_s :db %>
+  created_by: 2
+  created_at: <%= 4.days.ago.to_s :db %>
+  updated_by: 2
+  updated_at: <%= 4.days.ago.to_s :db %>
+eSite3:
+  id: 12
+  journal_id: 4
+  body: "site entry 3"
+  body_filtered: "site entry 3 filtered"
+  state: "published"
+  date: <%= 3.days.ago.to_s :db %>
+  created_by: 2
+  created_at: <%= 3.days.ago.to_s :db %>
+  updated_by: 2
+  updated_at: <%= 3.days.ago.to_s :db %>
+eSite4:
+  id: 13
+  journal_id: 4
+  body: "site entry 4"
+  body_filtered: "site entry 4 filtered"
+  state: "published"
+  date: <%= 2.days.ago.to_s :db %>
+  created_by: 2
+  created_at: <%= 2.days.ago.to_s :db %>
+  updated_by: 2
+  updated_at: <%= 2.days.ago.to_s :db %>
+eSite5:
+  id: 14
+  journal_id: 4
+  body: "site entry 5"
+  body_filtered: "site entry 5 filtered"
+  state: "published"
+  date: <%= 1.days.ago.to_s :db %>
+  created_by: 2
+  created_at: <%= 1.days.ago.to_s :db %>
+  updated_by: 2
+  updated_at: <%= 1.days.ago.to_s :db %>
+eSite6:
+  id: 15
+  journal_id: 4
+  body: "site entry 6"
+  body_filtered: "site entry 6 filtered"
+  state: "published"
+  date: <%= 0.days.ago.to_s :db %>
+  created_by: 2
+  created_at: <%= 0.days.ago.to_s :db %>
+  updated_by: 2
+  updated_at: <%= 0.days.ago.to_s :db %>
+e8_1:
+  id: 16
+  journal_id: 8
+  body: "journal 8 entry 1"
+  body_filtered: "entry 16 filtered"
+  state: "published"
+  date: <%= 4.days.ago.to_s :db %>
+  created_by: 8
+  created_at: <%= 4.days.ago.to_s :db %>
+  updated_by: 8
+  updated_at: <%= 4.days.ago.to_s :db %>
+e8_2:
+  id: 17
+  journal_id: 8
+  body: "journal 8 entry 2"
+  body_filtered: "entry 17 filtered"
+  state: "draft"
+  date: <%= 2.days.ago.to_s :db %>
+  created_by: 8
+  created_at: <%= 2.days.ago.to_s :db %>
+  updated_by: 8
+  updated_at: <%= 2.days.ago.to_s :db %>
+e8_3:
+  id: 18
+  journal_id: 8
+  body: "journal 8 entry 3"
+  body_filtered: "entry 18 filtered"
+  state: "published"
+  date: <%= 1.days.ago.to_s :db %>
+  created_by: 8
+  created_at: <%= 1.days.ago.to_s :db %>
+  updated_by: 8
+  updated_at: <%= 1.days.ago.to_s :db %>
+  

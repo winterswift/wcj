@@ -1,0 +1,21 @@
+Hello <%= ( @user.name.blank? ? @user.login : @user.name) %>,
+
+This email is from the Word Count Journal. The following journal entry has a new comment:
+
+Journal: '<%= @journal.title %>
+Author: <%= (@journal.owner ? @journal.owner.name : "?") %>
+Date: <%= @entry.date %>
+Link: <%= @entry_url %>
+
+You are receiving this email because you selected a preference to be notified about new entries in your favorites list. You can change these preferences on your profile page:
+
+  <%= @user_profile_url %>
+
+Thanks for being a member of Word Count Journal. We hope you enjoy the service! Please help us to spread the word, and build the world's largest community of writers!
+
+Happy Journaling!
+
+-- The Word Count Journal Team
+
+<%= @url %>
+

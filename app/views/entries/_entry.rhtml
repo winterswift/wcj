@@ -1,0 +1,30 @@
+<li class="clearfix <%= cycle('odd', 'even') %> <%= entry.state %> <%= controller.entry_class(entry.date) %>">
+  <a href="<%= entry.url %>" class="date">
+    <span class="day"><%= entry.date.day %></span>
+		<span class="month"><%= Date::ABBR_MONTHNAMES[entry.date.month]  %></span>
+	</a>
+  <div class="info">
+  	<%= link_to image_tag(photo_or_default(entry, :thumb), :class => 'thumbnail small'), entry.url unless entry.photo.blank? %>
+  	<% unless entry.new_record? %>
+      <p><%= entry.excerpt(entry.words < 40 && entry.words > 5 ? entry.words - (entry.words / 5.0).round : 40) %><% if entry.words > 5 %>... <%= link_to '<strong>More &raquo;</strong>', entry.url %><% end %></p>
+      <p class="meta">
+        <%= link_to (entry.comments.count == 0 ? 'No comments' : pluralize(entry.comments.count, 'comment')) + '.', entry.url + '#comments' %> &nbsp;|&nbsp; 
+        <%= "#{entry.words}" %><% if user_is_current_user? %> / <%= entry.words_required %><% end %> <%= pluralize(entry.words, 'word').split(' ').last %>
+        <% if user_is_current_user? %> &nbsp;|&nbsp; 
+          <%= '<strong>This is a draft.</strong> &nbsp;' if entry.state == 'draft' %>
+          <%= link_to 'Edit this entry &raquo;', entry.url_hash.merge(:action => 'edit') %>
+           &nbsp;|&nbsp; 
+          <%= link_to_function entry.photo.blank? ? 'Upload photo &raquo;' : 'Change photo &raquo;', "$('photo-upload-#{entry.id}').show();this.hide();", :id => "photo-upload-link-#{entry.id}" %>
+          <div id="photo-upload-<%= entry.id %>" class="photo-upload" style="display:none">
+          <%= start_form_tag(entry.url_hash.merge(:action => 'update'), {:multipart => true}) %>
+            <%= file_column_field 'entry', 'photo' %>
+            <%= submit_tag 'Upload photo', :class => 'submit' %> or <%= link_to_function 'Cancel', "$('photo-upload-link-#{entry.id}').show();$('photo-upload-#{entry.id}').hide();" %>
+          <%= end_form_tag %>
+          </div>
+        <% end %>
+      </p>
+    <% else %>
+      <p>This entry should have <%= pluralize entry.words_required, 'word' %>.<br /><%= link_to 'Write this entry &raquo;', entry.url_hash.merge(:action => 'new') %></p>
+    <% end %>
+  </div>
+</li>

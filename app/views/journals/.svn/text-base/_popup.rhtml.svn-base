@@ -1,0 +1,7 @@
+<a href="<%= journal.url %>" class="popup">
+  <%= journal.title %>
+  <span class="content">
+    <%= journal.description %>
+    <%= render :partial => 'journals/progress', :locals => {:journal => journal} %>
+  </span>
+</a>

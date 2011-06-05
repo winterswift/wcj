@@ -1,0 +1,14 @@
+<div id="block-entries" class="block">
+  <h3>What's keeping us busy...</h3>
+  <div class="content">
+    <p><em>Here are some of the new features we are working on right now.</em></p> 
+    <% entries = site_entries()
+    unless entries.blank? %>
+    <ul class="excerpts clearfix">
+      <% entries.each do |entry| %>
+        <li><%= link_to "#{entry.excerpt(4)}#{entry.words > 4 ? '...' : ''}", entry.url %></li>
+      <% end %>
+    </ul>
+  <% end %>
+  </div>
+</div>

@@ -1,0 +1,12 @@
+<div id="block-comments" class="block">
+  <h3>Recent comments</h3>
+  <% comment_list = comments()
+     # controller.logger.debug("_latest_comments: [#{comment_list.map{|c| c.id}.join(',')}]")
+     unless comment_list.blank? %>
+    <ul class="excerpts clearfix">
+      <%= render :partial => 'comments/comment_short', :collection => comment_list %>
+    </ul>
+  <% else %>
+    <em>No comments</em>
+  <% end %>
+</div>

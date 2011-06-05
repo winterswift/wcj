@@ -1,0 +1,18 @@
+module UsersHelper
+  
+  def spammer_journals(journals, spammer)
+    if journals.size == 1
+      link_to truncate(journals.first.title, 50), journals.first.url, 
+        :target => :blank, :title => truncate(journals.first.description, 750)
+    else
+      links = []
+      journals[0,2].each{|j|
+        links << link_to(truncate(j.title, 20), j.url, 
+          :target => :blank, :title => truncate(j.description, 750))
+      }
+      links << link_to(" (+)", spammer.url, :target => :blank, :title => 'View more') if journals.size > 2
+      return links.join(', ')
+    end  
+  end
+  
+end

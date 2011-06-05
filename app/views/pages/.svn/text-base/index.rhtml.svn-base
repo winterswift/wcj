@@ -1,0 +1,20 @@
+<div class="clearfix">
+  <h1>Recently updated journals</h1>
+  <ul class="tabs">
+    <li class="active"><%= link_to_remote 'Journals', :url => {:controller => 'journals', :action => 'list'}, :complete => "toggleElements('groups', 'journals')" %></li>
+    <li><%= link_to_remote 'Groups', :url => {:controller => 'groups', :action => 'list'}, :complete => "toggleElements('journals', 'groups')" %></li>
+  </ul>
+  <%= render :partial => 'journals/tabs' %>
+</div>
+<div id="journals">
+  <ul id="journals-list" class="list journals">
+    <%= render :partial => 'journals/journal', :collection => journals(:journal_page_size => 8, :journal_page => 1, :journal_sort => {:column => 'updated', :order => 'desc'}) %>
+  </ul>
+  <%= link_to 'Show all journals &raquo;', journals_url, :class => 'highlighted' %>
+</div>
+<div id="groups" style="display:none">
+  <ul id="groups-list" class="list groups">
+    <%= render :partial => 'groups/group', :collection => groups %>
+  </ul>
+  <%= link_to 'Show all groups &raquo;', groups_url, :class => 'highlighted' %>
+</div>

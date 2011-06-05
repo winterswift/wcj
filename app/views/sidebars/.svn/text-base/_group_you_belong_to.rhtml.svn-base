@@ -1,0 +1,9 @@
+<% groups_you_belong_to = current_user.groups(true).delete_if { |g| user_is_current_user?(Group.find(g.id).owner) } %>
+<% if logged_in? && !groups_you_belong_to.blank? %>
+<div id="block-groups" class="block highlighted">
+  <h3>Groups you belong to</h3>
+  <div class="content clearfix">
+    <ul class="quick-list"><%= groups_you_belong_to.map { |g| "<li#{' class="private"' if g.is_private?}>#{link_to(image_tag('oneone/remove.gif'), g.url_hash.merge(:action => 'remove_member', :member_id => current_user.id), :class => 'remove', :confirm => 'Are you sure you want to leave this group?')}#{link_to(g.title, g.url)}</li>" } %></ul>
+  </div>
+</div>
+<% end %>

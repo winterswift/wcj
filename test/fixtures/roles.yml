@@ -1,0 +1,10 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+guest:
+  id: 1
+  title: "guest"
+user:
+  id: 2
+  title: "user"
+admin:
+  id: 3
+  title: "admin"

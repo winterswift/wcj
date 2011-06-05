@@ -1,0 +1,8 @@
+<h1>Groups</h1>
+<%= group_list = groups()
+    render :partial => 'groups/tabs' %>
+<ul class="list journals groups">
+  <%= render :partial => 'groups/group', :collection => group_list %>
+</ul>
+
+<%= render_pagination_links(group_pages(), 'group_') %>

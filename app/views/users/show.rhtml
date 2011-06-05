@@ -1,0 +1,42 @@
+<% journals = journals(:journal_page_size => 9999) %>
+<%= render :partial => 'partials/user_introduction' if user_is_current_user? && current_user.journals.blank? %>
+
+<h1<% if user_is_current_user? || current_user_is_admin? %> class="nomargin"<% end %>><%= user_is_current_user? ? 'Your' : (@user ? "#{@user.login}'s" : "?'s") %> journals</h1>
+<% if user_is_current_user? || current_user_is_admin? %>
+<ul class="buttons clearfix">
+  <li class="journal"><%= link_to 'Create another Journal', :controller => 'journals', :action => 'new', :user_id => @user %></li>
+</ul>
+<% end %>
+  
+<% unless journals.blank? %>
+<ul class="list journals">
+  <%= render :partial => 'journals/journal', :collection => journals %>
+</ul>
+<% else %>
+  <% if user_is_current_user? %>
+    <p><em>You have no journals yet</em></p>
+    <%= link_to '&raquo; Go ahead and create your first journal', :controller => 'journals', :action => 'new', :user_id => @user %>
+  <% else %>
+    <em><%= @user.login %> has no journals yet</em>
+  <% end %>
+<% end %>
+
+<h1<% if user_is_current_user? || current_user_is_admin? %> class="nomargin"<% end %>><%= user_is_current_user? ? 'Your' : "#{@user.login}'s" %> groups</h1>
+<% if user_is_current_user? || current_user_is_admin? %>
+<ul class="buttons clearfix">
+  <li class="group"><%= link_to 'Create another Group', :controller => 'groups', :action => 'new', :user_id => @user %></li>
+</ul>
+<% end %>
+
+<% unless groups.blank? %>
+<ul class="list journals groups">
+  <%= render :partial => 'groups/group', :collection => groups %>
+</ul>
+<% else %>
+  <% if user_is_current_user? %>
+    <p><em>You have no groups yet</em></p>
+    <%= link_to '&raquo; Go ahead and create your first group', :controller => 'groups', :action => 'new', :user_id => @user %>
+  <% else %>
+    <em><%= @user.login %> doesn't belong to any groups yet. Would you like to invite him/her to one of your groups?</em>
+  <% end %>
+<% end %>

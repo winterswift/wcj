@@ -1,0 +1,58 @@
+10
+
+dir
+939
+svn+ssh://svn.makalumedia.com/repos/wcj/branches/production/vendor/plugins/userstamp
+svn+ssh://svn.makalumedia.com/repos/wcj
+
+
+
+2006-11-03T10:14:14.786086Z
+4
+alex
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+24ebd3e6-e88e-4ea6-b995-85fbb0d99243
+
+test
+dir
+
+init.rb
+file
+
+
+
+
+2007-09-28T14:05:30.000000Z
+6230314c6e059be9c6f3a0c04ea87132
+2006-11-03T10:14:14.786086Z
+4
+alex
+
+lib
+dir
+
+README
+file
+
+
+
+
+2007-09-28T14:05:30.000000Z
+1a495dee4eac6280e2833faceb635461
+2006-11-03T10:14:14.786086Z
+4
+alex
+

@@ -1,0 +1,63 @@
+<%#
+ c. 2006 makalumedia
+ 
+ 2006-11-15 james.anderson added scope
+ %>
+ 
+<%= error_messages_for 'journal' %>
+
+<p class="field"><label for="journal_title">Title:</label>
+<%= text_field 'journal', 'title'  %></p>
+
+<p class="field"><label for="journal_introduction">Description <span>(what's this journal about?):</span></label>
+<%= text_area 'journal', 'description', :rows => 5  %></p>
+
+<p class="field"><label for="journal_start_date">Date <span>(start to end):</span></label>
+
+<div class="clearfix" style="margin-top:-15px">
+  <div style="float:left;margin-right:4px">
+    <%= hidden_field 'journal', 'start_date' %>
+    <% if @journal.new_record? || @journal.entries.blank? %><img src="/images/calendar.gif" id="display_start_date_btn" style="float:left;margin:0 5px 0 0" /> <% end %><span id="display_start_date"><%= @journal.start_date.blank? ? 'Start date' : format_date(@journal.start_date) %></span>
+    <% if @journal.new_record? || @journal.entries.blank? %>
+    <script type="text/javascript">
+      var d = new Date();
+      Calendar.setup({inputField: "journal_start_date", ifFormat: "%Y-%m-%d", button: "display_start_date_btn", displayArea: "display_start_date", daFormat: "%b %d, %Y", weekNumbers: false, range: [d.getFullYear(), d.getFullYear() + 1]});
+    </script>
+    <% end %>
+    <strong>&nbsp;to&nbsp;</strong>
+  </div>
+  
+  <div style="float:left">
+    <%= hidden_field 'journal', 'end_date' %>
+    <img src="/images/calendar.gif" id="display_end_date_btn" style="float:left;margin:0 5px 0 0" /> <span id="display_end_date"><%= @journal.end_date.blank? ? 'End date' : format_date(@journal.end_date) %></span>
+    <script type="text/javascript">
+      var d = new Date();
+      Calendar.setup({inputField: "journal_end_date", ifFormat: "%Y-%m-%d", button: "display_end_date_btn", displayArea: "display_end_date", daFormat: "%b %d, %Y", weekNumbers: false, range: [d.getFullYear(), d.getFullYear() + 1]});
+    </script>
+  </div>
+</div>
+</p>
+
+<br />
+
+<p class="field"><label for="initial_count">Initial number of words:</label>
+<% if @journal.new_record? || @journal.entries.blank? %><%= text_field 'journal', 'initial_count', :style => 'width:40px;text-align:right;'  %> word<% else %><%= @journal.initial_count %> <%= @journal.initial_count > 1 ? 'words' : 'word' %><% end %></p>
+
+
+<p class="field"><label for="journal_scope">Visibility <span>(for your eyes only or visible to the whole world):</span></label>
+<%= select(:journal, :scope, [ [ "Public", User::SCOPE_PUBLIC],
+                               [ "Private", User::SCOPE_PRIVATE] ],
+                             { :selected => @journal.scope })  %></p>
+                             
+<p class="field"><label for="sort_order">Default sort order <span>():</span></label>
+<%= select_tag('journal[entry_sort][order]', [['New to old', 'desc'], ['Old to new', 'asc']].map {|v| "<option#{' selected=\"selected\"' if v.last == @journal.entry_sort['order']} value=\"#{v.last}\">#{v.first}</option>"}) %></p>
+
+<!--
+<% if @user.groups.blank? %>
+  <p><em>You could also create a group and invite friends to join it. That way you can all work together.</em></p>
+<% else %>
+  <p class="field"><label for="journal_group_id">Group <span>(share it with friends):</span></label>
+  <%= select('journal', 'group_ids', @user.groups.map {|g| [ g.title, g.id ] },
+  { :include_blank => true, :selected => ((@journal.blank? || @journal.groups.blank?) ? '' : @journal.groups.first.id) }) %>
+<% end %>
+-->

@@ -1,0 +1,1 @@
+<% if flash[:notice] || @notice_message %><div id="notice"><%= flash[:notice] || @notice_message %></div><% end %>

@@ -1,0 +1,149 @@
+#!ruby
+#
+# Word Count Journal controller for accounts
+# (c) 2006 makalumedia
+# 
+# 2006-11-21  james anderson moved inits to config/environment.rb
+
+module ApplicationHelper
+  
+  ## app init
+  ## somehow breaks the load process. load("wcj.rb");
+
+  def is_home?
+    controller.controller_name == 'pages' && controller.action_name == 'index'
+  end
+  
+  def current_user_is_admin?()
+    controller.current_user_is_admin?()
+  end
+  
+  def is_current_user_page?
+    controller.controller_name == 'users' && controller.action_name == 'show' && user_is_current_user?
+  end
+  
+  def render_navigation
+    output = ""
+    if logged_in?
+      output << "<li class=\"label\">#{current_user.login}: </li>"
+      output << "<li>#{link_to "Your Area", :controller => 'users', :action => 'show', :id => current_user}</li>"
+      output << "<li>#{link_to 'Logout', logout_url}</li>" 
+      if (current_user_is_admin?())
+        output << "<li>#{link_to 'Sign up', signup_url}</li>"
+      else
+        output << "<li>#{link_to 'Contact Us', contact_url}</li>"
+      end
+    else
+      output << "<li>#{link_to 'Sign up', signup_url}</li>"
+      output << "<li>#{link_to 'Login', login_url}</li>"
+      output << "<li>#{link_to 'Contact Us', contact_url}</li>"
+    end
+    output
+  end
+  
+  def render_pagination_links(pages, prefix = '')
+    if pages.length > 1
+      output = '<div id="paginator">'
+      output << (pages.current.previous ? link_to('&laquo; Previous', params.merge("#{prefix}page" => pages.current.previous)) : '<span class="disabled">&laquo; Previous</span>')
+      output << pagination_links_each(pages, :link_to_current_page => true, :name => "#{prefix}page", :window_size => 5) do |n|
+        params["#{prefix}page"] = n
+        if pages.current_page.number == n
+          "<span>#{n.to_s}</span>"
+        else
+          link_to(n.to_s, params)
+        end
+      end
+      output << (pages.current.next ? link_to('Next &raquo;', params.merge("#{prefix}page" => pages.current.next)) : '<span class="disabled">Next &raquo;</span>')
+      output << '</div>'
+    end
+  end
+  
+  # For a journal
+  def days_to_go(journal)
+    days_left = journal.days - journal.entry_days
+    if days_left < 1
+      'Journal completed'
+    else
+      latest_entry = journal.entries.find(:first, :conditions => ['state = ?', 'published'], :order => 'date DESC')
+      (journal.entry_days > 0 ? 
+        "#{journal.entry_days} down, " :
+        "Not started. ") + 
+      "#{pluralize days_left, 'day'} to go. " + 
+      (journal.entry_days == 0 && user_is_current_user?(journal.owner) ? 
+        link_to('Write the first word &raquo;', :controller => 'entries', :action => 'new', :journal_id => journal.id, :user_id => journal.owner.id, :date => journal.start_date.strftime('%d'), :month => journal.start_date.strftime('%m'), :year=> journal.start_date.strftime('%Y')) : 
+        '')
+      # !latest_entry.blank? ? link_to('Latest entry &raquo;', :controller => 'entries', :action => 'show', :journal_id => journal.id, :user_id => journal.owner.id, :date => latest_entry.date.strftime('%d'), :month => latest_entry.date.strftime('%m'), :year=> latest_entry.date.strftime('%Y')) : ''
+    end
+  end
+  
+  def format_date(date, format = '%b %d, %Y')
+    date.strftime(format)
+  end
+  
+  def format_number(num, params = {})
+    number_to_currency(num, {:unit => '', :separator => '.', :delimiter => ',', :precision => 0}.merge(params))
+  end
+  
+  def truncate_words(text, count = 5)
+    text.split(' ')[0...count].join(' ')
+  end
+  
+  def word_count(text)
+    text.split(' ').length
+  end
+  
+  # generate a breadcrumb for the current resource
+  # the base is the site root, and the next level is the controller name.
+  # successive levels depend on the controller and the requested resource.
+  # a single instance 
+  def breadcrumb(separator = ' &raquo; ')
+    if controller
+      trail = controller.breadcrumb_trail()
+      return if trail.blank?
+      crumb = trail.map{|elt|
+        case elt
+        when String
+          elt
+        when Array
+          link_to(elt[0], elt[1])
+        else
+          elt.to_s
+        end
+        }.join(separator)
+    else
+      crumb = link_to('Home', home_url)
+    end
+    crumb
+  end
+
+  def avatar_or_default(object)
+    url = ((object && object.avatar) ?
+           user_avatar_url(:action=> 'avatar', :controller=> 'images',
+                           :user_id=> object.id,
+                           :name=> File.basename(object.avatar)) :
+            'avatar.png')
+    url
+  end
+  
+  def photo_or_default(object, size=nil)
+    (object && object.photo && object.user) ?
+      # instead of "/photos/#{object.photo_relative_path}"
+      # which releases control
+      entry_photo_url(:action=> 'photo', :controller=> 'images',
+                     :user_id=> object.user.id, :entry_id=> object.id,
+                     :name=> File.basename(object.photo), :size=> size) :
+      'photo'
+  end
+  
+  def comment_label(entry, context = :show)
+    comment_count = entry.comments.count
+    case comment_count
+    when 0
+      'No comments. ' + link_to("Be the first to add a comment#{' below' if context != :list}.", entry.url + '#comments')
+    when 1
+      'One comment. ' + link_to("Read the comment#{' below' if context != :list}, and add your own.", entry.url + '#comments')
+    else
+      "#{comment_count} comments. " + link_to("Read the comments#{' below' if context != :list}, and add your own.", entry.url + '#comments')
+    end
+  end
+end

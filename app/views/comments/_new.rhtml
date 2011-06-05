@@ -1,0 +1,11 @@
+<% unless @entry.blank? %>
+<h3>Add a comment</h3>
+  <div class="content">
+  <%= start_form_tag :controller => 'entries', :action => 'create_comment',
+                   :user_id=> @user.id, :journal_id=> @journal.id,
+                   :year => @entry.date.year, :month => @entry.date.month, :date => @entry.date.day %>
+    <%= render :partial => 'comments/form' %>
+    <%= submit_tag "Post Comment" %>
+  <%= end_form_tag %>
+  </div>
+<% end %>

@@ -1,0 +1,10 @@
+<%= error_messages_for 'group' %>
+
+<p><label for="group_name">Title</label><br/>
+<%= text_field 'group', 'title'  %>
+<p class="field"><label for="journal_scope">Visibility <span>(for your eyes only or visible to the whole world):</span></label>
+<%= select(:group, :scope, [ [ "Public", User::SCOPE_PUBLIC],
+                               [ "Private", User::SCOPE_PRIVATE] ],
+                             { :selected => @group.new_record? ? User::SCOPE_PUBLIC : @group.scope })  %></p>
+<p><label for="group_description">Description</label><br/>
+<%= text_area 'group', 'description', :rows => 5 %></p>

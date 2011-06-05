@@ -1,0 +1,17 @@
+<% if @journal %>
+<div id="block-statistics" class="block highlighted">
+  <h3>About this journal</h3>
+  <div class="content">
+    <p class="description"><strong><%=h @journal.description %></strong></p>
+    <p class="stats">This journal begins on <strong><%= format_date(@journal.start_date) %></strong> with <strong><%= pluralize @journal.initial_count, 'word' %></strong>, and continues until <strong><%= format_date(@journal.end_date) %></strong>. During these <strong><%= pluralize @journal.days, 'day' %></strong> <%= user_is_current_user? ? 'you' : (@journal.user ? link_to(@journal.user.login, @journal.user.url) : 'someone') %> will write a total of <strong><%= format_number @journal.words_required %> words</strong>.</p>
+    <% unless @journal.groups.blank? %>
+    <p style="margin-bottom:5px;color: #5E483C;">This journal is in the following <strong>groups</strong>:</p>
+    <ul>
+      <% @journal.groups.each do |group| %>
+      <li><%= link_to group.title, :controller => 'groups', :action => 'show', :id => group %></li>
+      <% end %>
+    </ul>
+    <% end %>
+  </div>
+</div>
+<% end %>

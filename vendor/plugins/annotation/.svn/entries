@@ -1,0 +1,58 @@
+10
+
+dir
+939
+svn+ssh://svn.makalumedia.com/repos/wcj/branches/production/vendor/plugins/annotation
+svn+ssh://svn.makalumedia.com/repos/wcj
+
+
+
+2007-02-01T20:27:53.417011Z
+838
+james
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+24ebd3e6-e88e-4ea6-b995-85fbb0d99243
+
+test
+dir
+
+Rakefile
+file
+
+
+
+
+2007-09-28T14:05:31.000000Z
+9d9a6c7654c4207e46179cc5022d4cd1
+2007-01-12T16:23:39.935216Z
+572
+james
+
+init.rb
+file
+
+
+
+
+2007-09-28T14:05:31.000000Z
+c6854234d45ab6abf090a31e060f7283
+2007-01-12T16:23:39.935216Z
+572
+james
+
+lib
+dir
+

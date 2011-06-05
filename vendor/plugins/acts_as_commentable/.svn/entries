@@ -1,0 +1,85 @@
+10
+
+dir
+939
+svn+ssh://svn.makalumedia.com/repos/wcj/branches/production/vendor/plugins/acts_as_commentable
+svn+ssh://svn.makalumedia.com/repos/wcj
+
+
+
+2006-12-31T02:03:19.545840Z
+520
+james
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+24ebd3e6-e88e-4ea6-b995-85fbb0d99243
+
+test
+dir
+
+tasks
+dir
+
+init.rb
+file
+
+
+
+
+2007-09-28T14:05:29.000000Z
+8d98cc8df3e22b97ddc4b9c97b440afe
+2006-11-03T10:14:14.786086Z
+4
+alex
+
+lib
+dir
+
+install.rb
+file
+
+
+
+
+2007-09-28T14:05:29.000000Z
+cbe738c10eba4ae2da8c6859c9723e44
+2006-11-03T10:14:14.786086Z
+4
+alex
+
+MIT-LICENSE
+file
+
+
+
+
+2007-09-28T14:05:29.000000Z
+3ea1b94d199b85cbc4970271ba0ae1c7
+2006-11-03T10:14:14.786086Z
+4
+alex
+
+README
+file
+
+
+
+
+2007-09-28T14:05:29.000000Z
+d26a384f720ffe9ea5098180d9aa2637
+2006-11-03T10:14:14.786086Z
+4
+alex
+

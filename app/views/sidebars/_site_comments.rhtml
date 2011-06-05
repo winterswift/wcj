@@ -1,0 +1,19 @@
+<div id="block-site-comments" class="block">
+  <h3>Recent wishes</h3>
+  <% comments = site_comments()
+     logger.info("site_comments: #{comments.inspect}")
+     case 
+     when comments.blank? %>
+  <em>Nothing yet</em>
+  <% else  %>
+    <ul class="excerpts clearfix">
+      <%= render :partial => 'comments/comment_short', :collection => comments[0...6] %>
+    </ul>
+  <% end %>
+</div>
+
+<% if (logged_in?) %>
+<div id="block-make-wish" class="block">
+  <%= render :partial => 'comments/site_new' %>
+</div>
+<% end %>

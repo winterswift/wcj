@@ -1,0 +1,17 @@
+<%= error_messages_for 'settings' %>
+
+<h3>Document List Counts</h3>
+<p><label for="html">html list count</label><br/>
+<%= text_field_tag :html_per_page, @html_per_page, :size=>8  %></p>
+
+<p><label for="rss">rss list count</label><br/>
+<%= text_field_tag :rss_per_page, @rss_per_page, :size=>8  %></p>
+
+<h3>E-Mail Notification Addresses</h3>
+
+<p><label for="admin">administrative</label><br/>
+<%= text_field_tag :wcj_email, @wcj_email, :size=>32 %></p>
+
+<p><label for="bugs">bugs</label><br/>
+<%= text_field_tag :wcj_bugs_email, @wcj_bugs_email, :size=>32  %></p>
+

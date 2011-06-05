@@ -1,0 +1,44 @@
+<% journal = @journal || (@entry ? @entry.journal : nil) %>
+<div id="block-calendar" class="block"></div>
+<script type="text/javascript">
+  function dateChanged(calendar) {
+    if (calendar.dateClicked) {
+      <% if journal %>
+      window.location = "<%= journal.url %>" + "/" + 
+                        calendar.date.strftime('%Y') + "/" + 
+                        calendar.date.strftime('%m') + "/" + 
+                        calendar.date.strftime('%d')<% if user_is_current_user? %> + (dateClass(calendar.date).indexOf('missing') > -1 ? '/new' : '')<% end %>;
+      <% end %>
+    }
+  };
+
+  var ENTRY_CLASSES = {<%= 
+    result = entries(:entry_page_size=>999, :entry_page=>1).map { |e|
+    controller.logger.debug("entry: #{e}")
+    "d_#{e.date.strftime('%Y_%m_%d')}: '#{controller.entry_class(e.date)}#{e.date == @date ? ' selected-entry' : ''}'" }.join(', ')
+    controller.logger.debug("ENTRY_CLASSES: #{result}")
+    result %>
+  };
+  
+  function dateClass(date) {
+    return ENTRY_CLASSES[date.strftime('d_%Y_%m_%d')];
+  }
+  
+  function checkDateStatus(date) {
+    return dateClass(date) || true;
+  };
+
+  function initCalendar() {
+    Calendar.setup({
+      flat: "block-calendar",
+      flatCallback: dateChanged,
+      weekNumbers: false,
+      <% unless journal.blank? %>
+      range: [<%= journal.start_date.year %>, <%= journal.end_date.year %>],
+      <% end %>
+      dateStatusFunc: checkDateStatus
+    });
+  }
+  
+  Event.observe(window, 'load', initCalendar);
+</script>

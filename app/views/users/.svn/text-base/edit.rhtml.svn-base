@@ -1,0 +1,4 @@
+<h1>Edit your profile</h1>
+<p>This is where you can edit your info and change what appears on <%= link_to 'your profile page', :controller => 'users', :action => 'show', :id => @user %>.</p>
+
+<%= render :partial => 'form' %>

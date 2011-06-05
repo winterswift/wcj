@@ -1,0 +1,18 @@
+<div id="block-photos" class="block">
+  <h3>Latest photos</h3>
+  <% unless (photo_entries = photos()).blank? %>
+    <ul class="thumbnails clearfix">
+      <% reset_cycle %>
+      <% photo_entries.each do |photo| %>
+        <li class="<%= cycle('left', 'center', 'center', 'right') %>">
+          <%= link_to image_tag(photo_or_default(photo, :thumb)), photo.url, :title => (photo.user ? photo.user.login : '') %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <em>No photos found</em>
+    <% if user_is_current_user? %>
+    <p>Any photos you attach to entries will show up here.</p>
+    <% end %>
+  <% end %>
+</div>

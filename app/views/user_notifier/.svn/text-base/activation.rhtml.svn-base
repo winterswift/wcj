@@ -1,0 +1,7 @@
+Hello there,
+
+  Your account has been activated.
+  
+  You may now start adding your journals.
+
+<%= @url %>

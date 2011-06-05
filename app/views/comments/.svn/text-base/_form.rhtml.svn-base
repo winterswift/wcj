@@ -1,0 +1,2 @@
+<p class="field"><label for="comment_comment">Your comment <span>(be nice - inappropriate comments will be removed):</span></label>
+<%= text_area 'comment', 'comment', :rows => 10 %></p>

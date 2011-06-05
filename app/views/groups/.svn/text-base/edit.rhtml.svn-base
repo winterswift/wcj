@@ -1,0 +1,6 @@
+<h1>Editing group: <%= @group.title %></h1>
+
+<%= start_form_tag @group.url_hash.merge(:action => 'update') %>
+  <%= render :partial => 'form' %>
+  <%= submit_tag 'Save changes' %>
+<%= end_form_tag %>

@@ -1,0 +1,16 @@
+<% unless @user.blank? %>
+<div id="block-comments" class="block">
+  <h3><%= user_is_current_user? ? 'Your' : "#{@user.login}'s" %> Comments</h3>
+  <% unless @user.comments.blank? %>
+  <ul class="list comments">
+    <%= render :partial => 'comments/comment_short', :collection => @user.comments[0...5] %>
+  </ul>
+  <% else %>
+    <% if user_is_current_user? %>
+      <em>You haven't commented on anything yet</em>
+    <% else %>
+      <em><%= @user.login %> hasn't commented on the site yet</em>
+    <% end %>
+  <% end %>
+</div>
+<% end %>

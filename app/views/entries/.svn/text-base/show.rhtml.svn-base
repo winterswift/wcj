@@ -1,0 +1,34 @@
+<h1 class="nomargin"><%= @journal.title %></h1>
+<ul class="buttons clearfix">
+  <li class="sort comments"><%= comment_label(@entry) %></li>
+  <% if user_is_current_user? %><li class="edit"><%= link_to 'Edit', @entry.url_hash.merge(:action => 'edit') %></li><% end %>
+</ul>
+
+<div class="utils">
+  <div class="date">
+    <span class="day"><%= @entry.date.day %></span>
+  	<span class="month"><%= Date::ABBR_MONTHNAMES[@entry.date.month]  %></span>
+  </div>
+  <%
+  next_entry = @entry.next_entry(user_is_current_user? || current_user_is_admin? ? nil : 'published')
+  prev_entry = @entry.previous_entry(user_is_current_user? || current_user_is_admin? ? nil : 'published')
+  -%>
+  <% unless prev_entry.blank? %>
+    <%= link_to 'Previous', prev_entry.url, :class => 'prev' %>
+  <% else %>
+    <span class="prev">Previous</span>
+  <% end %>
+  <% unless next_entry.blank? %>
+    <%= link_to 'Next', next_entry.url, :class => 'next' %>
+  <% else %>
+    <span class="next">Next</span>
+  <% end %>
+</div>
+
+<div id="writingpad" class="show">
+  <div id="pagecurl">
+    <div class="body">
+      <%= @entry.body_filtered %>
+    </div>
+  </div>
+</div>

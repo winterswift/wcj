@@ -1,0 +1,7 @@
+<div class="block">
+  <h3>Delete this journal?</h3>
+  <div class="content">
+    <p>Deleting a journal immediately and permanently deletes all the entries and comments associated with this journal. There is no undo so make sure you're absolutely sure you want to delete this journal.</p>
+    <%= link_to 'I understand - delete this journal &raquo;', @journal.url_hash.merge(:action => 'destroy'), :confirm => 'Are you sure you want to permanently delete this journal?\n\nThis action can not be undone.', :class => 'destroy', :post => true %>
+  </div>
+</div>

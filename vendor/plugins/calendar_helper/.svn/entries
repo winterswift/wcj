@@ -1,0 +1,85 @@
+10
+
+dir
+939
+svn+ssh://svn.makalumedia.com/repos/wcj/branches/production/vendor/plugins/calendar_helper
+svn+ssh://svn.makalumedia.com/repos/wcj
+
+
+
+2006-11-03T10:14:14.786086Z
+4
+alex
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+24ebd3e6-e88e-4ea6-b995-85fbb0d99243
+
+test
+dir
+
+Rakefile
+file
+
+
+
+
+2007-09-28T14:05:31.000000Z
+00f18fea8c44e63e3993cc8dd1f36017
+2006-11-03T10:14:14.786086Z
+4
+alex
+
+init.rb
+file
+
+
+
+
+2007-09-28T14:05:31.000000Z
+c581ffa7cedb72e5770630db463a5fb4
+2006-11-03T10:14:14.786086Z
+4
+alex
+
+lib
+dir
+
+generators
+dir
+
+MIT-LICENSE
+file
+
+
+
+
+2007-09-28T14:05:31.000000Z
+ab9b97df69fac2311dca359eb541485e
+2006-11-03T10:14:14.786086Z
+4
+alex
+
+README
+file
+
+
+
+
+2007-09-28T14:05:31.000000Z
+b5f6c3aeea7ce3b74feb65ba8f1b5142
+2006-11-03T10:14:14.786086Z
+4
+alex
+

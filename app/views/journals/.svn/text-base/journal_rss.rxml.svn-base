@@ -1,0 +1,48 @@
+# c 2006 makalumedia
+# author james.anderson@makalumedia.com
+# 
+# rss feed file for WordCountJournal journals
+# implemented based on FeedTools
+# 
+# 20061115 james.anderson initial
+# 
+  VERSIONS[__FILE__] = "$Id:$"
+  
+  feed = feed = FeedTools::Feed.new
+  feed.title = "Word Count Journal"
+  feed.subtitle = "Journals"
+  feed.author.name = "Miscellaneous Authors"
+  # feed.lastBuildDate = Date.today
+  feed.published = Time.now
+  feed.link = url_for(:controller=>"journals", :action=>"list", :only_path=> false)
+  settings = feed_settings()
+  
+  journals({"journal_page_size"=> settings[:page_size]}.merge(params)).each { |journal|
+      entry = FeedTools::FeedItem.new
+      owner = journal.owner
+      feed.entries << entry
+      entry.title = journal.title
+      entry.rights = ( owner ? "(c) " + owner.email : nil)
+      if ( nil != (j_entry = journal.entries.last) )
+        entry.time = j_entry.updated_at
+        entry.published = j_entry.created_at
+        entry.updated = j_entry.updated_at
+      else
+        entry.time= journal.updated_at
+        entry.published = journal.created_at
+        entry.updated = journal.updated_at
+      end
+      src = ( settings[:images_p] ?
+              ( (alt = (j_entry && j_entry.photo)) ?
+                photo_or_default(j_entry, :thumb) :
+                ( (alt = (owner && owner.is_public? && owner.avatar)) ? avatar_or_default(owner) : nil) ) :
+              nil )
+      entry.content =
+        "<div>" +
+        ( src ? "<div style='float: left; margin: 0px 5px 5px 0px;'><img alt='{alt}' src='#{src}' width='100' height='100' border='0' /></div>" : "" ) +
+        journal.description() + 
+        "</div>"
+      entry.link = url_for({:only_path=> false}.merge(journal.url_hash))
+  }
+
+  feed.build_xml(settings[:encoding], settings[:version], xml);

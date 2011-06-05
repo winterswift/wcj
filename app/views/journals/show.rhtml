@@ -1,0 +1,49 @@
+<% entries_list = entries({:entry_page_size => Settings.list_entries_count})
+%>
+<h1 class="nomargin"><%=h @journal.title %></h1>
+<ul class="buttons clearfix">
+  <% unless user_is_current_user? %>
+  <li class="sort label">Sort:</li>
+  <li class="sort desc"><% if page_sort_order['order'] == :desc %><span>New to old</span><% else %><%= link_to 'New to old', '?entry_sort[column]=date&entry_sort[order]=desc' %><% end %></li>
+  <li class="sort asc"><% if page_sort_order['order'] == :asc %><span>Old to new</span><% else %><%= link_to 'Old to new', '?entry_sort[column]=date&entry_sort[order]=asc' %><% end %></li>
+  <% else %>
+  <li class="sort">
+    <a class="nosort" href="#">
+      <strong>Where's the sort?</strong>
+      <span>
+        <!--For technical reasons, it's not possible to sort your own journal. (Everybody else reading it will be able to sort it.)<br /><br />
+        We know this isn't ideal and we'll fix it soon.-->
+        When you edit your own journals, the entries appear in reverse chronological order.
+      </span>
+    </a>
+  </li>
+  <% end %>
+  
+  <% if user_is_current_user? && @journal.end_date >= Date.today %><li class="edit"><%= link_to "Edit", @journal.url_hash.merge(:action => 'edit') %></li><% end %>
+  <li class="rss">
+    <% if @journal.completion_ratio >= 1 %>
+    <span>Subscribe to this journal</span>
+    <% else %>
+    <%= link_to "Subscribe to this journal", @journal.url_hash.merge(:action => 'rss') %>
+    <% end %>
+  </li>
+  <li class="favorite">
+    <% if logged_in? && !user_is_current_user? && !current_user.public_favorite_journals.include?(@journal) %>
+      <%= link_to 'Add to favorites', current_user.url_hash.merge(:action => 'add_favorite', :journal_id => @journal, :scope => 'public') %>
+    <% elsif logged_in? && current_user.public_favorite_journals.include?(@journal) %>
+      <%= link_to 'Remove from favorites', current_user.url_hash.merge(:action => 'remove_favorite', :journal_id => @journal), :class => 'remove' %>
+    <% else %>
+      <span title="<% if !logged_in? %>Sign up or login to add this journal to your favorites.<% else %>You can't favorite your own journals.<% end %>">Add to favorites</span>
+    <% end %>
+  </li>
+  <li class="print"><%= link_to "Print", @journal.url_hash.merge(:action => 'print'), :class => 'print' %></li>
+</ul>
+<% unless entries_list.blank? %>
+  <ul class="list entries">
+    <%= render :partial => 'entries/entry', :collection => (logged_in? && user_is_current_user?) || params.has_key?(:all) ? entries_list : entries_list[0...10] %>
+  </ul>
+  <%= link_to '<big>Show all</big>', "#{@journal.url}?all=1" if !params.has_key?(:all) && (logged_in? && user_is_current_user?) %>
+  <%= render_pagination_links(entry_pages, 'entry_') %>
+<% else %>
+  <em>No entries</em>
+<% end %>

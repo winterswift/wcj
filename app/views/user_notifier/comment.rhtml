@@ -1,0 +1,14 @@
+
+Hello there,
+
+This email is from the Word Count Journal.
+
+<%= (@commentator ? (@commentator.name || @commentator.login) : 'Someone') %> has just left a new comment on your entry, '<%= @entry.journal.title %>' from <%= "#{@entry.date}"%>:
+
+ <%= @comment_text %>
+
+Click here to see all comments on this entry:
+
+ http://<%= (Settings.wcj_host_label.blank? ? "" : (Settings.wcj_host_label + '.')) + Settings.wcj_http_domain %><%= @entry.url %>
+
+Happy Journaling!

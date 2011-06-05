@@ -1,0 +1,5 @@
+<% unless @group.blank? %>
+<div id="block-subscribe" class="block">
+  <%= link_to "Subscribe to this group", @group.url_hash.merge(:action => 'rss') %>
+</div>
+<% end %>

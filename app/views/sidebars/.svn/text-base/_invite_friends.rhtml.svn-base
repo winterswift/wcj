@@ -1,0 +1,9 @@
+<div id="block-profile" class="block clearfix">
+  <h3>Invite friends</h3>
+  <p>You can invite friends to join WCJ using the form below. Once they accept, they will be automatically added as your friends (and you’ll show up on their buddy list too).</p>
+  <%= start_form_tag :controller => 'users', :action => 'invite' %>
+    <p class="field"><label for="user_emails">Email Addresses <span>(one per line)</span></label>
+    <%= text_area '', '', :rows => 5 %></p>
+    <p><%= submit_tag 'Send Invitations' %>
+  <%= end_form_tag %>
+</div>

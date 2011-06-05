@@ -1,0 +1,16 @@
+<div id="block-groups" class="block">
+  <h3>Latest groups</h3>
+  <% latest_groups_params = {"group_page_size"=> Settings.latest_groups_count,
+                             "group_page"=> 1};
+     unless (latest_groups = groups(latest_groups_params)).blank? %>
+    <ul class="excerpts clearfix">
+      <% latest_groups.each do |group| %>
+        <li>
+          <%= link_to group.title, group.url %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <em>No groups found</em>
+  <% end %>
+</div>

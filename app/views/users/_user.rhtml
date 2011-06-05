@@ -1,0 +1,7 @@
+<li class="clearfix">
+  <%= image_tag avatar_or_default(user), :class => 'thumbnail large' %>
+  <div class="info">
+    <h3><%= link_to user.login, user.url %></h3>
+    <p><%=h word_count(user.description) > 15 ? "#{truncate_words(user.description, 15)}..." : user.description %></p>
+  </div>
+</li>

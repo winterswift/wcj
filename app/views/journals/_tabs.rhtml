@@ -1,0 +1,5 @@
+<ul class="subtabs clearfix">
+  <li class="active"><%= link_to_remote 'Recently Updated', :url => { :controller => 'journals', :action => 'list' } %></li>
+  <li><%= link_to_remote 'Furthest Along', :url => { :controller => 'journals', :action => 'list' } %></li>
+  <li><%= link_to_remote 'Recently Completed', :url => { :controller => 'journals', :action => 'list' } %></li>
+</ul>

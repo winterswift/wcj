@@ -1,0 +1,12 @@
+<h3>Make a wish</h3>
+<% if (site_journal() && site_journal_entry())
+     date= Date.today %>
+<%= start_form_tag :controller => 'entries', :action => 'create_comment',
+                   :user_id=> site_journal().owner.id, :journal_id=> site_journal().id,
+                   :year => date.year, :month => date.month, :date => date.day %>
+  <%= render :partial => 'comments/form' %>
+  <%= submit_tag "Save Comment" %>
+<%= end_form_tag %>
+<% else %>
+  ... temporarily unavailable.
+<% end %>

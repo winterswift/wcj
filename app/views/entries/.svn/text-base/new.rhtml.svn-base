@@ -1,0 +1,10 @@
+<h1><%= @entry.date_formatted %></h1>
+
+<%= start_form_tag( {:controller => 'entries', :action => 'create',
+                     :user_id=> @user.id, :journal_id=> @journal.id,
+                     :year => @entry.date.year, :month => @entry.date.month, :date => @entry.date.day},
+                     {:multipart => true}) %>
+  <%= render :partial => 'form' %>
+  <%= submit_tag "Create" %>
+<%= end_form_tag %>
+

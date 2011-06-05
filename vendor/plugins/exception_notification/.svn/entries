@@ -1,0 +1,58 @@
+10
+
+dir
+939
+svn+ssh://svn.makalumedia.com/repos/wcj/branches/production/vendor/plugins/exception_notification
+svn+ssh://svn.makalumedia.com/repos/wcj
+
+
+
+2006-11-03T10:14:14.786086Z
+4
+alex
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+24ebd3e6-e88e-4ea6-b995-85fbb0d99243
+
+init.rb
+file
+
+
+
+
+2007-09-28T14:05:31.000000Z
+d68a35cf6df012c7fd6562da6355a201
+2006-11-03T10:14:14.786086Z
+4
+alex
+
+lib
+dir
+
+views
+dir
+
+README
+file
+
+
+
+
+2007-09-28T14:05:31.000000Z
+fe84727e1adb78f3b7c59207d612720b
+2006-11-03T10:14:14.786086Z
+4
+alex
+

@@ -1,0 +1,5 @@
+<%= @user.email %>, your account has been suspended.
+
+If you have questions please contact the site management.
+
+<%= @url %>

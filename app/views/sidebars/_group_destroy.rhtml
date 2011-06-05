@@ -1,0 +1,7 @@
+<div class="block">
+  <h3>Delete this group?</h3>
+  <div class="content">
+    <p>Deleting a group does not affect any journals, entries or comments. There is no undo so make sure you're absolutely sure you want to delete the group.</p>
+    <%= link_to 'I understand - delete this group &raquo;', @group.url_hash.merge(:action => 'destroy'), :confirm => 'Are you sure you want to permanently delete this group?\n\nThis action can not be undone.', :class => 'destroy', :post => true %>
+  </div>
+</div>

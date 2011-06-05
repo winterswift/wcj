@@ -1,0 +1,13 @@
+<div id="block-search" class="block">
+  <h3>Find entries</h3>
+  <%= start_form_tag :controller => 'journals', :action => 'search' %>
+    <p class="field"><%= text_field 'search', 'author_or_group', :value => @group ? 'Author name' : 'Author or group name' %></p>
+    <p class="field"><%= text_field 'search', 'keywords', :value => 'Keywords' %></p>
+    <% unless @user.blank? %>
+      <p><strong>Search in:</strong><br />
+      <%= radio_button 'search', 'scope', 'user', :checked => true %><%= @user.login %>'s journal<%= 's' if @user.journals.count > 1 %>
+      <%= radio_button 'search', 'scope', 'all' %>all journals
+    <% end %></p>
+    <p><%= submit_tag 'Search', {:class => 'button'} %></p>
+  <%= end_form_tag %>
+</div>

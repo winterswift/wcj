@@ -1,0 +1,17 @@
+<% unless @user.blank? %>
+<div id="block-favorites" class="block highlighted">
+  <h3><%=h 'Your ' if user_is_current_user? %>favorite journals</h3>
+  <div class="content clearfix">
+    <% unless @user.public_favorite_journals.blank? %>
+    <ul class="quick-list">
+      <%= @user.public_favorite_journals.map { |j|
+         "<li#{' class="unread"' if user_is_current_user? && current_user.journal_unread?(j)}>
+             #{link_to image_tag('oneone/remove.gif'), @user.url_hash.merge(:action => 'remove_favorite', :journal_id => j), :class => 'remove', :confirm => "Are you sure you want to remove \"#{j.title}\" from your favorites?" if user_is_current_user?}
+             #{link_to(j.title, j.url)}</li>" } %>
+      </ul>
+    <% else %>
+    <em><% if user_is_current_user? %>You have<% else %><%= @user.login %> has<% end %> no favorite journals yet.</em>
+    <% end %>
+  </div>
+</div>
+<% end %>

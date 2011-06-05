@@ -1,0 +1,42 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+c1:
+  id: 1
+  title: "comment 1"
+  user_id: 3
+  commentable_id: 8
+  commentable_type: 'Entry'
+  comment: "site comment 1"
+  state: "published"
+  created_by: 3
+  created_at: <%= 4.days.ago.to_s :db %>
+  updated_by: 3
+  updated_at: <%= 4.days.ago.to_s :db %>
+
+c2:
+  id: 2
+  title: "comment 2"
+  user_id: 3
+  commentable_id: 9
+  commentable_type: 'Entry'
+  comment: "site comment 2"
+  state: "published"
+  created_by: 3
+  created_at: <%= 3.days.ago.to_s :db %>
+  updated_by: 3
+  updated_at: <%= 3.days.ago.to_s :db %>
+
+c3:
+  id: 3
+  title: "comment 3"
+  user_id: 3
+  commentable_id: 9
+  commentable_type: 'Entry'
+  comment: "site comment 3"
+  state: "published"
+  created_by: 3
+  created_at: <%= 3.days.ago.to_s :db %>
+  updated_by: 3
+  updated_at: <%= 3.days.ago.to_s :db %>
+
+ 

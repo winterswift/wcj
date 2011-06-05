@@ -1,0 +1,55 @@
+anauthor_role:
+  role_id: 2
+  user_id: 1
+
+anadmin_role1:
+  role_id: 2
+  user_id: 2
+
+anadmin_role2:
+  role_id: 3
+  user_id: 2
+
+reader1_role:
+  role_id: 2
+  user_id: 3
+
+reader2_role2:
+  role_id: 2
+  user_id: 3
+
+rolling1:
+  role_id: 2
+  user_id: 4
+
+rolling2:
+  role_id: 2
+  user_id: 5
+  
+rolling3:
+  role_id: 2
+  user_id: 6
+
+rolling4:
+  role_id: 2
+  user_id: 7
+
+rolling5:
+  role_id: 2
+  user_id: 8
+
+rolling6:
+  role_id: 2
+  user_id: 9
+
+rolling7:
+  role_id: 2
+  user_id: 10
+
+rolling8:
+  role_id: 2
+  user_id: 11
+
+rolling9:
+  role_id: 2
+  user_id: 12

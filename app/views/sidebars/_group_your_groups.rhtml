@@ -1,0 +1,9 @@
+<% your_groups = current_user.groups.delete_if { |g| !user_is_current_user?(Group.find(g.id).owner) } %>
+<% if logged_in? && !your_groups.blank? %>
+<div id="block-your-groups" class="block highlighted">
+  <h3>Your groups</h3>
+  <div class="content clearfix">
+    <ul class="quick-list"><%= your_groups.map { |g| "<li#{' class="private"' if g.is_private?}>#{link_to(g.title, g.url)}</li>" } %></ul>
+  </div>
+</div>
+<% end %>

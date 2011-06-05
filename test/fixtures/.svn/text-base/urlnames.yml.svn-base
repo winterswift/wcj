@@ -1,0 +1,10 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+journal1:
+  nameable_id: 1
+  nameable_type: "journal"
+  name: <%= Journal.new().urlnameify("a journal") %>
+
+group1:
+  nameable_id: 1
+  nameable_type: "group"
+  name: <%= Group.new().urlnameify("a group") %>

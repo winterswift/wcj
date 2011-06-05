@@ -1,0 +1,586 @@
+#!ruby
+#
+# Word Count Journal class definition for users
+# 
+# 2006-11-18  james.anderson  url designates by id rathern than by login
+#   relocated find_instance method from application controller
+# 2006-11-20  james.anderson  (WCJ-ASC-F01 WCJ-ASC-F02)
+#   added is_admin? for use in restrict_access extensions
+# 2006-12-24  james.anderson  added User#date
+
+VERSIONS[__FILE__] = "$Id$"
+
+require 'digest/sha1'
+require 'annotation'
+# load "#{RAILS_ROOT}/lib/annotation.rb"
+
+class User < ActiveRecord::Base
+  include ActionView::Helpers::TextHelper
+  include Annotation::Annotator
+
+  # scope / access
+  # applies to Journal and Group access as well
+  SCOPE_PUBLIC = 'public';
+  SCOPE_PRIVATE = 'private';
+  SCOPE_GROUP = 'group';
+  
+  STATE_ACTIVE = 'active';
+  STATE_SUSPENDED = 'suspended';
+  STATE_PENDING = 'pending';
+  STATE_REMOVED = 'removed';
+  
+  FAVORITE = 'favorite'
+  SUBSCRIPTION = 'subscription'
+  OVERDUE_REMINDERS = 'overdue_reminders'
+  CONTACT_PERMISSIONS_NEWS = 'contact_permissions_news'
+  ADMIN_LOGIN = 'wcj';
+  @@destroy_groups= true
+  
+  class NotFoundError < NameError
+  end
+  
+  # mucks up persistent attributes
+  # attr_accessor :scope
+  attr_accessor :password
+  cattr_accessor :current_user
+  
+  file_column :avatar,
+    :store_dir => File.join(RAILS_ROOT, 'images', 'avatars'),
+    :magick => { :geometry => '100x100!' }
+  
+  has_and_belongs_to_many :groups
+  has_and_belongs_to_many :roles
+  has_many :journals, :order => 'title ASC', :dependent => :destroy
+  has_many :entries, :through => :journals
+  has_many :comments, :order => 'created_at DESC', :dependent => :destroy
+  composed_of :timezone, :class_name => 'TZInfo::Timezone', 
+                         :mapping => %w(time_zone identifier)
+  
+  before_save :encrypt_password
+  before_save :filter_description
+  before_create :make_activation_code, :assign_user_role
+  
+
+  validates_presence_of :login, :email, :scope, :time_zone
+  validates_presence_of :password, :if => :password_required?
+  validates_presence_of :password_confirmation, :if => :password_required?
+  validates_length_of :password, :within => 4..40, :if => :password_required?
+  validates_confirmation_of :password, :if => :password_required?
+  validates_length_of :login, :within => 3..40
+  validates_length_of :email, :within => 3..100
+  validates_length_of :description, :maximum => 500
+  validates_email_format_of :email
+#  validates_uniqueness_of :login, :email, :case_sensitive => false
+#  allow multiple users with the same email
+  validates_uniqueness_of :login, :case_sensitive => false
+  if (ActiveRecord::Migrator.current_version() >= 13)
+    serialize :contact_permissions, Array
+  end
+  
+  # State handling
+  acts_as_state_machine :initial => :pending
+  
+  state :pending
+  state :active, :enter => :do_activate
+  state :suspended, :enter => :do_suspend
+  state :removed, :after=> :do_remove
+  
+  event :activate do
+    transitions :to => :active, :from => :pending
+    transitions :to => :active, :from => :suspended
+  end
+  
+  event :suspend do
+    transitions :to => :suspended, :from => [:active, :pending]
+  end
+  
+  event :remove do
+    transitions :to => :removed, :from => [:active, :pending, :suspended]
+  end
+  
+  def do_activate
+    if state == 'pending'
+      @activated = true
+      update_attributes(:activated_at => Time.now.utc, :activation_code => nil)
+      if ( Settings.require_activation() )
+        UserNotifier.deliver_activation(self)
+      end
+    else
+      UserNotifier.deliver_reactivation(self)
+    end
+  end
+  
+  def do_suspend
+    UserNotifier.deliver_suspension(self)
+  end
+
+  # to remove a user means
+  # - replace the login
+  # - blank the description
+  # - remove owned journals
+  # - remove owned groups
+  # - retract group memebrships
+  # - destroy ! comments (so long as no reference possible)
+  # - destroy ! annotations (so long as no reference possible)
+  def do_remove()
+    logger.info("removing user: #{self.id}:")
+    self.login = "#{self.id} removed #{Time.now.utc.strftime('%Y%m%dT%H%M%S')}Z"
+    self.first_name=("")
+    self.last_name=("")
+    self.email=("notauser@example.com")
+    self.description = ""
+    self.password = self.recovery_password
+    self.password_confirmation = self.recovery_password
+    logger.info("removing journals: #{self.journals.map{|i| i.id}.join(',')}")
+    self.journals.each{|i| i.remove! } # leave instance list intact, but that's ephemeral
+    owned_groups = Group.find(:all, :conditions => ["user_id = ?", self.id])    
+    logger.info("removing groups: #{owned_groups.map{|i| i.id}.join(',')}")
+    owned_groups.each{|i| i.remove! }
+    logger.info("retiring group memberships: #{self.groups.map{|i| i.id}.join(',')}")
+    self.groups.clear
+    comments = Comment.find_comments_by_user(self)
+    logger.info("destroying comments: #{comments.map{|i| i.id}.join(',')}")
+    comments.each{|i| i.destroy }
+    logger.info("destroying annotations: #{self.annotation_contexts.map{|i| i.id}.join(',')}")
+    self.annotation_contexts.each{|i| i.destroy }
+    self.remember_token_expires_at = nil
+    self.remember_token = nil
+    self.save_with_validation(false)
+    self.freeze()
+    logger.info("removed user: #{self.id}:")
+  end
+  
+
+  # User methods
+  # 
+  # Return the Journal instance designated by id, title, or urlname as key.
+  # The id serves as a global designator, while the title, and thus the
+  # urlname, are valid in the context of a user only.
+  # The argument can be a string, in which it is interpreted as the id, or
+  # it can be a keyhash, in which case the precedence is id, title, urlname.
+  # The default argument is the current params keyhash
+  # If no instance is found - whether because there is no user context, or no
+  # journal matches, the :if_does_not_exist param specifies either nil or error.
+  
+  def self.find_instance(args = params)
+    designator = nil
+    first_name = nil
+    last_name = nil
+    dimension = nil
+    result = nil
+    user = nil
+ 
+    logger.debug("User.find_instance(" + args.inspect() + ")");
+    args ||= {}
+    
+    case
+    when (designator = (args.kind_of?(String) ? args : (args[:user_id] || args[:id])))
+      dimension=:id
+      result = User.find_by_id(designator)
+    when (designator = args[dimension=:login])
+      result = User.find_by_login(designator)
+    when (last_name = args[dimension=:last_name])
+      if (first_name = args[:first_name])
+        result = User.find_by_first_name_and_last_name(first_name, last_name)
+      else
+        result = User.find_by_last_name(last_name)
+      end
+    when (first_name = args[dimension=:first_name])
+        result = User.find_by_first_name(first_name)
+    when (args.fetch(:if_does_not_exist, :error) == nil)
+       return nil   
+    else
+      fail(ArgumentError, "id, login, first_name, or last_name required in: " +
+                          args.inspect());
+    end
+    
+    case
+    ## control success
+    when (result == nil || result == [])
+      case (args.fetch(:if_does_not_exist, :error))
+      when :error
+        fail(NotFoundError.new("user not defined [context: #{dimension}]: #{designator}",
+                               designator))
+      when nil
+        result = nil
+      else
+        fail(ArgumentError, "invalid :if_does_not_exist")
+      end
+    ## extract singleton sequence
+    when (result.kind_of?(Array) && result.length == 1)
+      result = result[0];
+    end
+ 
+    logger.debug("User.find_instance(...) x " + dimension.to_s() + " => " + result.inspect());
+    return result
+  end
+  
+  
+  # Custom functions
+  # 
+  
+  def assign_role(role)
+    self.roles << Role.find_by_title(role.to_s)
+  end
+
+  def has_role?(role)
+    self.roles.map(&:title).include?(role.to_s)
+  end
+  
+  def is_admin?()
+    has_role?(:admin)
+  end
+
+  def is_public?()
+    SCOPE_PUBLIC == self.scope
+  end
+  
+  def is_private?()
+    SCOPE_PRIVATE == self.scope
+  end
+  
+  def name
+    "#{first_name} #{last_name}"
+  end
+  
+  def self.find_by_name(name)
+    find(:first, :conditions => ["CONCAT(LOWER(first_name), ' ', LOWER(last_name)) = ?", name])
+  end
+  
+  def url
+#    "/users/#{login}"
+    "/users/#{id}"
+  end
+
+  def url_hash
+    {:controller => 'users', :user_id => id.to_s}
+  end
+  
+  def session_id()
+    "#{self.class.name}/#{self.id}"
+  end
+  
+  # Authentication functions
+  def self.authenticate(login, password)
+    user = find_by_login(login)
+    # puts("found user: " + login + "==" + user.inspect())
+    user && user.authenticated?(password) ? user : nil
+  end
+
+  def self.encrypt(password)
+    Digest::SHA1.hexdigest("--#{password}--")
+  end
+
+  def encrypt(password)
+    self.class.encrypt(password)
+  end
+
+  def authenticated?(password)
+    # puts("authenticated(" + password + "/" + encrypt(password) + ")==" + crypted_password)
+    crypted_password == encrypt(password)
+  end
+
+  def remember_token?
+    remember_token_expires_at && Time.now.utc < remember_token_expires_at 
+  end
+
+  def remember_me
+    self.remember_token_expires_at = 2.weeks.from_now.utc
+    self.remember_token = encrypt("#{email}--#{remember_token_expires_at}")
+    save(false)
+  end
+
+  def forget_me
+    self.remember_token_expires_at = nil
+    self.remember_token = nil
+    save(false)
+  end
+  
+  def recently_activated?
+    @activated
+  end
+
+  # return a substring of the encrypted password as the temporary value
+  def recovery_password()
+    crypted_password[0,[crypted_password.length,10].min]
+  end
+  
+  # return a date instance for the current time in the user's zone
+  def today(utc = Time.now)
+    user_time = self.timezone.utc_to_local(utc)
+    Date.civil(user_time.year, user_time.month, user_time.day)
+  end
+  
+  def time(utc = Time.now)
+    self.timezone.utc_to_local(utc)
+  end
+  
+  def midnight_utc(utc = Time.now)
+    Time.gm(utc.year, utc.month, utc.day, 0, 0, 0, 0)
+  end
+  
+  def time_of_day(utc = Time.now)
+    Time.at(self.time(utc) - self.midnight(utc))
+  end
+  
+  def midnight(utc = Time.now)
+    offset = (self.time(utc) - utc)
+    self.timezone.local_to_utc(midnight_utc(utc))
+  end
+    
+  
+#  replaced with assertions
+#  def user_setting()
+#    @user_setting ||= UserSetting.new(self)
+#  end
+#  
+#  def setting(name, about = nil)
+#    user_setting().interned_value(name, about)
+#  end
+#  
+#  def setting=(name, value, about = nil)
+#    user_setting().interned_value(name, value, about)
+#  end
+  
+  # annotations
+  def get_read_time(datum)
+    self.asserted(datum, :read_time)
+  end
+  
+  def set_read_time(datum, time = Time.now)
+    self.assert(datum, :read_time, time)
+  end
+  
+  def public_favorite_journals
+    self.assertions_which(User::FAVORITE, User::SCOPE_PUBLIC, :all).map{|i|
+       (i.kind_of?(Journal) && i.active?) ? i : nil }.compact
+  end
+  
+  def private_favorite_journals
+    self.assertions_which(User::FAVORITE, User::SCOPE_PRIVATE, :all).map{|i|
+      (i.kind_of?(Journal) && i.active?) ? i : nil }.compact
+  end
+  
+  def favorite_journals
+    self.assertions_predicating(User::FAVORITE).map{|i| (i.kind_of?(Journal) && i.active?) ? i : nil }.compact
+  end
+  
+  def add_favorite(journal, scope)
+    unless (journal.kind_of?(Journal))
+      fail(ArgumentError, "invalid journal: #{journal}")
+    end
+    unless [User::SCOPE_PUBLIC, User::SCOPE_PRIVATE].include?(scope)
+      fail(ArgumentError, "invalid scope: #{scope}")
+    end
+    
+    if (scope == self.asserted(journal, User::FAVORITE))
+      scope
+    elsif (journal.is_public?() || Group.user_journal_groups(self, journal) != [])
+      self.assert(journal, User::FAVORITE, scope)
+      logger.debug("asserted favorite: #{self.url}.(#{journal.url} User::FAVORITE #{scope})")
+      scope
+    else
+      nil
+    end
+  end
+  
+  def remove_favorite(journal)
+    self.find_assertions(journal, User::FAVORITE, nil, :all).map{|a| a.destroy()}
+  end
+  
+  def subscribe(subject)
+    self.assert(subject, User::SUBSCRIPTION, self)
+  end
+
+  def unsubscribe(subject)
+    self.find_assertions(subject, User::SUBSCRIPTION, self, :all).map{|a| a.destroy()}
+  end
+  
+  def subscribed_entries()
+    assertions_which(User::SUBSCRIPTION, self).map{|i| (i.kind_of?(Entry)) ? i : nil }.compact
+  end
+  
+  def subscribed_journals()
+    assertions_which(User::SUBSCRIPTION, self).map{|i| (i.kind_of?(Journal)) ? i : nil }.compact
+  end
+  
+  def subscriptions()
+     assertions_which(User::SUBSCRIPTION, self)
+  end
+  
+  def contact_permission(type)
+    contact_permissions().include?(type.to_s)
+  end
+
+  def set_contact_permission(type, value)
+    type = type.to_s
+    permissions = contact_permissions()
+    if (value && !(permissions.include?(type)))
+      permissions << type
+    elsif ((!value) && permissions.include?(type))
+      permissions.delete(type)
+    end
+  end
+  
+  def contact_permissions_news()
+    contact_permission('news')
+  end
+
+  def contact_permissions_news=(value)
+    set_contact_permission('news', value)
+  end
+
+  def overdue_reminders()
+    self.assertions_that(Journal, OVERDUE_REMINDERS, :first)
+  end
+  
+  # record an annotation for overdue reminders.
+  # if there was a true assertion, then nil means overwrite it with false,
+  # otherwise nil does not add an assertion.
+  def overdue_reminders=(state)
+    if (state)
+      deadline = compute_next_deadline()
+      self.assert(Journal, OVERDUE_REMINDERS, deadline)
+    else
+      self.deny(Journal, OVERDUE_REMINDERS)
+    end
+  end
+  
+  def compute_next_deadline(time = Time.now, period = :day)
+    case period
+    when :hour
+      day = time.day
+      hour = (time.hour + 1).modulo(24)
+      if (0 == hour)
+        day += 1
+      end
+      Time.gm(time.year, time.month, day, hour, 0,0) 
+    when :day
+      midnight_today = midnight(time)
+      midnight_today + (60 * 60 * 24)
+    else
+      time
+    end
+  end
+  
+  # find all journals for a user which are missing an entry given the user's today
+  def overdue_journals()
+    self.journals.map{|j|
+      j.overdue? ? j : nil
+    }.compact
+  end
+  
+  def overdue_reminder()
+    overdue = self.overdue_journals()
+    if (overdue && (overdue.length > 0))
+      logger.info("UserController#overdue_reminders: user #{self.login}/#{self.id} overdue: [#{overdue.map{|i| i.id}.join(', ')}]")
+      UserNotifier.deliver_user_overdue_reminder(self, overdue)
+    end
+  end
+
+  
+  # for a given journal, if it was never read, return true/false, depending on
+  # whether it has entries. if it was read, return false if it has not been
+  # modified snce the last view, and the time of view if it has been modified
+  def journal_unread?(journal)
+    if (journal)
+      if (read_time = self.get_read_time(journal))
+        (journal.updated_at() > read_time) ? read_time : false
+      else
+        !(journal.entries.empty?)
+      end
+    end
+  end
+
+  # graphing methods
+  def graph_attributes(grapher)
+    { 'URL'=> self.url(),
+      'label' => (login.blank? ? "#{self.class.name}/#{self.id}" : login) }
+  end
+  
+  def build_graph(grapher)
+    grapher.debug("User#build_graph(#{self}/#{self.id})")
+    self.journals.each{|i| grapher.graph_edge(self, i, {'label'=> 'author', 'color' => 'blue'}) }
+    self.groups.each{|i| grapher.graph_edge(self, i, {'label'=> 'owner', 'color' => 'blue'}) }
+    self.comments.each{|i| grapher.graph_edge(self, i, {'label'=> 'made', 'color' => 'blue'}) }
+    super(grapher)
+    self
+  end
+  
+
+  # class functions for analysis
+  def self.journal_distribution()
+    totals = [0,0,0,0,0,0,0,0,0,0]
+    self.find(:all).each{|u|
+      count = u.journals.length
+      if (count < totals.length)
+        totals[count] += 1
+      else
+        totals[totals.length - 1] += 1
+      end
+    }
+    totals
+  end
+  
+  def User.entry_distribution()
+    totals = Hash.new(0)
+    self.find(:all).each{|u|
+      count = u.journals.entries.length
+      totals[count] += 1
+    }
+    totals.to_a.sort_by{|pair| pair.first}
+  end
+  
+  def User.entry_distribution()
+    totals = Hash.new(0)
+    self.find(:all).each{|u|
+      u_count = 0;
+      u.journals.each{|j| u_count += j.entries.length}
+      totals[u_count] += 1
+    }
+    totals.to_a.sort_by{|pair| pair.first}
+    # should equal Entries.count:
+    # User.entry_distribution.inject(0){|x , pair| x + (pair.first * pair[1])}
+  end
+
+  def User.entry_age_distribution()
+    totals = Hash.new(0)
+    today = Date.today
+    self.find(:all).each{|u|
+      u.journals.each{|j|
+        if (last = j.entries.first)
+          age = (today - last.date).floor
+          totals[age] += 1
+        end
+      }
+    }
+    totals.to_a.sort_by{|pair| pair.first}
+    # should equal Entries.count:
+    # User.entry_distribution.inject(0){|x , pair| x + (pair.first * pair[1])}
+  end
+
+  # Custom functions
+
+  protected
+  
+  def assign_user_role
+    self.assign_role(:user)
+  end
+  
+  def encrypt_password
+    return if password.blank?
+    self.crypted_password = encrypt(password)
+  end
+  
+  def password_required?
+    crypted_password.blank? || !password.blank?
+  end
+  
+  def make_activation_code
+    self.activation_code = Digest::SHA1.hexdigest( Time.now.utc.to_s.split('//').sort_by {rand}.join )
+  end
+  
+  def filter_description
+    self.description = strip_tags(self.description)
+  end
+end

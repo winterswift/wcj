@@ -1,0 +1,3 @@
+<div id="block-subscribe" class="block">
+  <%= link_to "Subscribe to this journal", @journal.url_hash.merge(:action => 'rss') %>
+</div>

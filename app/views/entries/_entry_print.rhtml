@@ -1,0 +1,7 @@
+<% unless entry_print.new_record? %>
+<li class="clearfix">
+  <h4><%= entry_print.date_formatted %></h4>
+  <%= image_tag(photo_or_default(entry_print, 'medium')) unless entry_print.photo.blank? %>
+  <%= entry_print.body_filtered %>
+</li>
+<% end %>

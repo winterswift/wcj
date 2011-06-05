@@ -1,0 +1,29 @@
+<% if logged_in? && @group && @group.users.include?(current_user) %>
+<div id="block-manage-journals" class="block">
+  <h3>Manage journals</h3>
+  <div class="content clearfix">
+    <% journals_in_group = current_user.journals.map{|j| @group.journals.include?(j) ? j : nil }.compact
+       journals_not_in_group = current_user.journals.map{|j| @group.journals.include?(j) ? nil : j }.compact %>
+       
+    <% unless journals_in_group.blank? %>
+      <p>Your <%= pluralize(journals_in_group.length, "journal").split(' ').last %> in this group:</p>
+      <ul><%= journals_in_group.map { |j| "<li#{' class="private"' if j.is_private?}>#{link_to(image_tag('oneone/remove.gif'), j.url_hash.merge(:action => 'remove', :group_id => @group.id), :class => 'remove', :confirm => "Are you sure you want to remove \"#{j.title}\" from this group?")}#{link_to(j.title, j.url)}</li>" } %></ul>
+    <% else %>
+      <strong>
+      <% if journals_not_in_group.blank? %>
+        <%= link_to 'Create a new journal', :controller => 'journals', :action => 'new', :user_id => current_user.id %> and later add it to this group.
+      <% else %>
+        Select any journals below that you want to add to this group.
+      <% end %>
+      </strong>
+    <% end %>
+    
+    <% unless journals_not_in_group.blank? %>
+      <div style="margin-top:12px;padding:10px;border:1px solid #aaa;background:#ddd;">
+        <p>Add any of your journals to this group:</p>
+        <ul><%= journals_not_in_group.map { |j| "<li#{' class="private"' if j.is_private?}>#{link_to(image_tag('oneone/add.gif'), j.url_hash.merge(:action => 'add', :group_id => @group.id), :class => 'add')}#{link_to(j.title, j.url)}</li>" } %></ul>
+     </div>
+    <% end %>
+  </div>
+</div>
+<% end %>

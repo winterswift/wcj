@@ -1,0 +1,5 @@
+<%= pop_up = nil if local_assigns[:pop_up].nil? %>
+<li class="clearfix <%= cycle('odd', 'even') %>">
+  <h2><%= link_to group.title, group.url, :target => pop_up ? :blank : '' %><% unless @user %> <span><%= pluralize group.users.count, 'member' %></span><% end %></h2>
+  <p><%=h group.description %></p>
+</li>

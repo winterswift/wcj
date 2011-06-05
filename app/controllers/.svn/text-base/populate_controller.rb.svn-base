@@ -1,0 +1,325 @@
+#!ruby
+#
+# Word Count Journal controller for populating a database with fictitious data
+# (c) 2006 makalumedia
+# 
+# 2006-11-21  james.anderson  new
+#  replaced Date.today() with "2006-01-01".to_date to get the base day in order to correct an
+#    error where successive entries were ending up on the same day. !?
+# 2006-11-22  james.anderson  added file_column, but uncertain if it's stable
+# 2006-11-27  james.anderson  activate users
+# 2006-12-15  james.anderson  delegate the image locations to the ImagesController
+
+VERSIONS[__FILE__] = "$Id$"
+
+require "ftools"
+
+class PopulateController < ApplicationController
+  USERS = 10;
+  JOURNALS = 5;
+  GROUPS = 2;
+  FRANCHISE = 2;
+  ENTRIES = 10;
+  SUBSCRIPTIONS = 3;
+  
+  access_rule 'admin', :only => [:index, :generate]
+
+  def index
+    @user_count = USERS
+    @journal_count = JOURNALS
+    @group_count = GROUPS
+    @franchise_count = FRANCHISE
+    @entry_count = ENTRIES
+    @subscribe_count = SUBSCRIPTIONS
+  end
+
+  def generate 
+    @avatar_files = [];
+    @photo_files = [];
+    @days = Integer(params[:days] || 20)
+    @base_date = (params[:date] ? params[:date].to_date : Time.now.to_date.-((@days/2).floor))
+    # file_column_loader = Test::Unit::TestCase.new
+    
+    Find.find("./test/fixtures/avatars/"){|file|
+      if ((file =~ /.*gif/ || file =~ /.*jpg/) && !(file =~ /.*svn.*/))
+        @avatar_files << file
+      end
+    }
+    Find.find("./test/fixtures/photos/"){|file|
+      if ((file =~ /.*gif/ || file =~ /.*jpg/) && !(file =~ /.*svn.*/))
+        @photo_files << file
+      end
+    }
+    
+    puts("Generating... [base date: #{@base_date}")
+    flash[:notice] = "Generating... [base date: #{@base_date}"
+    
+    @users= generate_users(Integer(params[:user_count] || USERS), @avatar_files)
+    flash[:notice] << "Users: (#{User.count}): #{@users.map{|i| '(' + i.id().to_s + '|' + i.login + ')'}.join(' ')}"
+    @groups= generate_groups(Integer(params[:group_count] || GROUPS), @users)
+    flash[:notice] << "Groups: #{@groups.map{|i| '(' + i.id().to_s + '|' + i.urlname + ')'}.join(' ')}"
+    @journals= generate_journals(Integer(params[:journal_count] || JOURNALS), @users,
+                                 @base_date, @base_date.+(@days))
+    flash[:notice] << "Journals: #{@journals.map{|i| '(' + i.id().to_s + '|' + i.urlname + ')'}.join(' ')}"
+    franchise_journals(Integer(params[:franchise_count] || FRANCHISE), @groups, @journals)
+    max_entry_count = Integer(params[:entry_count] || ENTRIES)
+    @journals.map{|journal|
+      entry_count = [rand(max_entry_count), journal.days].min
+      generate_entries(entry_count, journal, @photo_files)
+    }
+    subscribe_users(Integer(params[:subscription_count] || SUBSCRIPTIONS), @groups, @users)
+    
+    flash[:notice] << "Done."
+  end
+  
+  def instance_page_title()
+    "Populate - #{super()}"
+  end
+  
+  protected
+  
+  def create_user(index, avatars) 
+    user = User.new(:login=> "userX#{index}",
+                    :first_name=>"user", :last_name=> "X#{index}",
+                    :email=> "userX#{index}@example.com",
+                    :crypted_password=> User.encrypt("test"),
+                    :created_at=> Time.now.utc(),
+                    :state=> :active,
+                    :scope=> (rand(4) > 0 ? User::SCOPE_PUBLIC : User::SCOPE_PRIVATE),
+                    :description=> "this is user number #{index}",
+                    :time_zone=> (rand(2) == 1 ? "UTC" : "Europe/Berlin"))
+    # save the instance to get the id
+    if user.save
+      user.update_attributes(:activated_at => Time.now.utc, :activation_code => nil,
+                             :state=> "active")
+      user.save
+      puts("user: #{user.id}/#{user.login}, time_zone/timezone/timezone.inspect: #{user.time_zone}|#{user.timezone}|#{user.timezone.inspect}")
+      user
+    else
+      puts("user.save failed: #{user.inspect}")
+      fail("user.save failed: #{user.inspect}")
+    end
+
+    if (rand(3) > 0)
+      source = avatars[rand(avatars.length)]
+      # it said the class would be involved
+      destination = ImagesController::avatar_pathname(user, source)
+      unless File.exist?(File.dirname(destination))
+        FileUtils.mkdir_p(File.dirname(destination))
+      end
+      File.syscopy(source, destination);
+      # store the filename as a raw attribute
+      user[:avatar]= File.basename(source)
+      puts("user: #{user.id}/#{user.login}: avatar: #{user[:avatar]}.")
+      # save it again to get the file column
+      if user.save
+        user
+      else
+        puts("user.save failed: #{user.inspect}")
+        fail("user.save failed: #{user.inspect}")
+      end
+    end
+    user
+  end
+  
+  def generate_users(count, avatars)
+    users = []
+    base = User.count();
+    1.upto(count) {|i|
+      users << create_user(i + base, avatars);
+    }
+    users
+  end
+
+  def create_group(index, users)
+    u_count = users.length
+    group = Group.new(:title=> "groupX#{index}",
+                      :scope=> (rand(4) > 0 ? User::SCOPE_PUBLIC : User::SCOPE_PRIVATE),
+                      :created_at=> Time.now.utc(),
+                      :description=> "groupX#{index} description")
+    user = users[rand(u_count)]
+    group.owner = user
+    group.users << user
+
+    if (group.save() && user.save)
+      group
+    else
+      puts("group.save failed: #{group.inspect} / #{user.save}")
+      fail("group.save failed: #{group.inspect}")
+    end
+  end
+    
+  def generate_groups(count, users)
+    groups = []
+    base = Group.count()
+    1.upto(count){|i|
+      groups << create_group(i + base, users)
+    }
+    groups
+  end
+
+  def create_journal(index, users, start_date, end_date)
+    u_count = users.length
+    user = users[rand(u_count)]
+    journal = Journal.new(:title=> "journalX#{index}",
+                          :scope=> (rand(4) > 0 ? User::SCOPE_PUBLIC : User::SCOPE_PRIVATE),
+                          :description=> "Description for the test journalX#{index}",
+                          :start_date=> start_date, :end_date=> end_date,
+                          :created_at=> Time.now.utc(),
+                          :created_by=> user.id, :updated_by=> user.id)
+    journal.owner = user
+    if journal.save()
+      journal
+    else
+      puts("journal.save failed: #{journal.inspect}")
+      fail("journal.save failed: #{journal.inspect}")
+    end
+  end
+
+  def generate_journals(count, users, start_date, end_date)
+    journals =[]
+    delta = end_date - start_date;
+    base = Journal.count();
+    1.upto(count){|i|
+      journals << create_journal(i + base, users, start_date, [start_date.+(rand(delta)), Date.today().+(1)].max)
+    }
+    journals
+  end
+
+  def franchise_journals(count, groups, journals)
+    j_count = journals.length
+    groups.map{|group|
+      1.upto(count){|i|
+        journal = journals[rand(j_count)]
+        unless group.journals.index(journal)
+          group.journals << journal
+        end
+      }
+      unless group.save()
+        puts("group.save failed: #{group.inspect}")
+        fail("group.save failed: #{group.inspect}")
+      end    
+      }
+  end
+
+  def subscribe_users(count, groups, users)
+    u_count = users.length
+    s_users = []
+    groups.map{|group|
+      1.upto(count){|i|
+        user = users[rand(u_count)]
+        unless (user == group.owner || s_users.index(user))
+          group.users << user
+          s_users << user
+          # puts("subscribed: group: #{group.id} user: #{user.id}")
+        end
+      }
+      unless (group.save())
+        puts("group.save failed: #{group.inspect}")
+        fail("group.save failed: #{group.inspect}")
+      end
+      s_users.map{|user|
+        unless (user.save())
+          puts("user.save failed for subscribe: #{user.inspect}")
+          fail("user.save failed for subscribe: #{user.inspect}")
+        end
+      }
+    }
+  end
+
+  def create_entry(count, journal, date, photos)
+    user = journal.owner
+    text = "journal '#{journal.title}' entry for #{date.year}-#{date.month}-#{date.day}."
+    entry = Entry.new(:body=> text, :body_filtered=> text,
+                      :journal_id=> journal.id,
+                      :date=> date,
+                      :created_at=> date, :updated_at=> date,
+                      :created_by=> user.id, :updated_by=> user.id,
+                      :state=> :published)
+    logger.debug("create entry #{journal.id}/#{entry.date}")
+    if entry.save()
+      if (rand(10) > 0) # must save and then publish and then resave !?
+        entry.publish!()
+        entry.save()
+        puts("published: #{entry}")
+      end
+      entry
+    else
+      puts("entry.save failed: #{entry.inspect}")
+      fail("entry.save failed: #{entry.inspect}")
+    end
+    if (rand(3) > 0)
+      source = photos[rand(photos.length)]
+      # it said the class would be involved
+      destination = ImagesController::photo_pathname(entry, source)
+      unless File.exist?(File.dirname(destination))
+        FileUtils.mkdir_p(File.dirname(destination))
+      end
+      File.syscopy(source, destination);
+      # store the filename as a raw attribute
+      entry[:photo]= File.basename(source)
+      if entry.save()
+        entry
+      else
+        puts("entry.save failed: #{entry.inspect}")
+        fail("entry.save failed: #{entry.inspect}")
+      end
+    end
+    entry
+  end
+  
+  def generate_entries(count, journal, photos)
+    logger.debug("\nentries for journal: #{journal.id} [#{journal.start_date} - #{journal.end_date}]...")
+    base = journal.entries.length
+    start = journal.start_date
+    1.upto(count) {|i|
+       index = (i + base) - 1
+       date = start.+(index)
+       # puts("date: #{date}")
+       journal.entries << create_entry(i+base, journal, date, photos)
+    }
+  end
+  
+  # see file_column.rb for the file processing rules
+  # this acts as if between the file upload step and validation
+  # thus the process it to copy all files to the tmp locations,
+  # augment the instances as they are created and then purge
+  # the tmp directories.
+  def setup_upload_directory(class_name, column_name, paths)
+    directory = File.join([RAILS_ROOT, "public", class_name.to_s, column_name.to_s, "tmp",  "000"])
+    unless File.exist?(directory)
+      FileUtils.mkdir_p(directory)
+    end
+    paths.map{|path|
+      to = File.join(directory, File.basename(path))
+      unless File.exist?(to)
+        File.syscopy(path, to)
+        # puts( "file: #{path} -> #{to}")
+      end
+      to
+    }
+  end
+  def teardown_upload_directory(class_name, column_name)
+    directory = File.join([RAILS_ROOT, "public", class_name.to_s, column_name.to_s, "tmp", "000"])
+    if File.exist?(directory)
+      # not yet ... FileUtils.remove_dir(directory)
+    end
+  end
+
+  def generate_entry_photo(instance, source_path)
+    # copy the source file to the instance's tmp location
+    # call the upload operator.
+    
+    # to make the instances directory
+    instance.photo-(path)
+  end
+  
+  def generate_user_avatar(instance, source_path)
+    # copy the source file to the instance's tmp location
+    # call the upload operator.
+    
+    FileUtils.mkpath() # to make the instances directory
+    instance.avatar=(path)
+  end
+  
+end

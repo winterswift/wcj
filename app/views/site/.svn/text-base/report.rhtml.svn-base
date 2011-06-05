@@ -1,0 +1,9 @@
+<h1>Site Status</h1>
+
+<table>
+ <tr>
+  <tr><td><%= link_to("Users", :controller=> 'users', :action=> nil) %></td><td> <%= User.count %></td></tr>
+  <tr><td><%= link_to("Journals", :controller=> 'journals', :action=> nil) %></td><td> <%= Journal.count %></td></tr>
+  <tr><td>Entries</td><td> <%= Entry.count %></td></tr>
+  <tr><td>Comments</td><td> <%= Comment.count %></td></tr>
+ </table>

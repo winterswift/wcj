@@ -1,0 +1,6 @@
+<h1>Specify Generation parameters</h1>
+
+<%= start_form_tag :action => 'generate' %>
+  <%= render :partial => 'form' %>
+  <%= submit_tag "Generate" %>
+<%= end_form_tag %>

@@ -1,0 +1,16 @@
+<% unless @group.blank? %>
+<div class="block highlighted">
+  <h3>Members in this group</h3>
+  <div class="content">
+    <% if @group.users.blank? %>
+      <em>This group has no members</em>
+    <% else %>
+    <ul class="group-members">
+      <% @group.users.uniq.each do |user| %>
+        <li<%= ' class="owner"' if user == @group.owner %>><%= link_to image_tag('oneone/remove.gif'), @group.url_hash.merge(:action => 'remove_member', :member_id => user.id), :class => 'remove', :confirm => "Are you sure you want remove #{user.login} from this group?" if current_user == @group.owner && user != @group.owner %><%= link_to user.login, user.url %></li>
+      <% end %>
+    </ul>
+    <% end %>
+  </div>
+</div>
+<% end %>

@@ -1,0 +1,15 @@
+<h2>Users</h2>
+
+<ul class="list users">
+  <%= render :partial => 'users/user', :collection => @users %>
+</ul>
+
+<h2>Groups</h2>
+<ul class="list groups">
+  <%= render :partial => 'groups/group', :collection => @groups %>
+</ul>
+
+<h2>Journals</h2>
+<ul id="journals" class="list journals">
+  <%= render :partial => 'journals/journal', :collection => @journals %>
+</ul>

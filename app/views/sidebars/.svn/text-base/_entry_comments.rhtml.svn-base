@@ -1,0 +1,21 @@
+<% unless @entry.blank? %>
+<a name="comments"></a>
+<div id="block-entry-comments" class="block">
+  <h3><%= comment_list = comments({:comment_page_size => 9999, :comment_sort => {'column' => 'created_at', 'order' => 'asc'}})
+          pluralize comment_list.length, 'comment' %></h3>
+  <% if logged_in? %>
+      <% if @entry.subscribed_users.include?(current_user) %>
+        <p><%= link_to 'Click here to turn off comment notification for this entry.', @entry.url_hash.merge(:action => 'unsubscribe_user') %></p>
+      <% else %>
+        <p><%= link_to 'Click here to be notified by email whenever comments are added to this entry.', @entry.url_hash.merge(:action => 'subscribe_user') %></p>
+      <% end %>
+  <% end %>
+  <ul class="list comments">
+    <%= if comment_list.blank?
+          "..."
+        else
+          render :partial => 'comments/comment', :collection => comment_list
+        end %>
+  </ul>
+</div>
+<% end %>

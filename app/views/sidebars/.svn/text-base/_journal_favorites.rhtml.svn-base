@@ -1,0 +1,18 @@
+<% if logged_in? %>
+<div id="block-favorites" class="block highlighted">
+  <h3>Your favorite journals</h3>
+  <div class="content clearfix">
+    <% unless current_user.public_favorite_journals.blank? %>
+    <ul class="quick-list">
+      <% current_user.public_favorite_journals.map do |j| %>
+        <li<%= ' class="unread"' if current_user.journal_unread?(j) %>
+          <%= link_to(j.title, j.url) %>
+        </li>
+      <% end %>
+      </ul>
+    <% else %>
+    <em>You have no favorite journals yet.</em>
+    <% end %>
+  </div>
+</div>
+<% end %>

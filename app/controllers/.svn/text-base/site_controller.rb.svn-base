@@ -1,0 +1,193 @@
+#!ruby
+#
+# Word Count Journal controller for site activities
+# 
+
+VERSIONS[__FILE__] = "$Id$"
+$START_TIME ||= Time.new()
+
+require 'stringio'
+require 'yaml'
+require 'annotation_grapher'
+class SiteController < ApplicationController
+  include Annotation::Examiner
+  
+  access_rule 'admin', :only => [:assert, :background, :deny, :index,
+                                 :report, :settings, :update, :versions]
+  access_rule 'user', :only =>:graph
+  
+  # make an assertion for the site_context current context
+  #  {:subject=> {:type=> name, :text=> (text + id)},
+  #   :predicate=> {:type=> name, :text=> (text + id)},
+  #   :object=> {:type=> name, :text=> (text + id)} }
+  #   
+  def assert
+    if ( (subject = intern_query_parameter(params[:subject])) &&
+         (predicate = intern_query_parameter(params[:predicate])) &&
+         (object = intern_query_parameter(params[:object])) )
+         
+      logger.debug("asserting; (#{subject} x #{predicate} x #{object})")
+      @assertion = site_context().assert(subject, predicate, object)
+    end
+    render_assertion_response(@assertion)
+  end
+
+  def background
+    unless $BACKGROUND
+      $BACKGROUND = MiddleMan.new_worker(:class => :site_worker,
+                                         :args => {})
+    end
+  end
+  
+  def deny
+    if ( (subject = intern_query_parameter(params[:subject])) &&
+         (predicate = intern_query_parameter(params[:predicate])) &&
+         (object = intern_query_parameter(params[:object])) )
+      @assertion = site_context().deny(subject, predicate, object)
+    end
+    render_assertion_response(@assertion)   
+  end
+
+  # generate a site graph
+  def graph(args = params)
+    search_option = param('search', {}, args)
+    search_by = param('by', 'user', search_option)
+    depth = param('depth', nil, search_option, 0)
+    if (depth && depth <= 0)
+      depth = nil
+    end
+    encoding = param('encoding', 'svg', search_option)
+    name = "WCJ_#{search_by}"
+    grapher = Annotation::Grapher.new(:name=> name, :depth => depth,
+                          :encoding => encoding,
+                          :pathname => "#{search_by}-#{Time.new.strftime('%Y%m%dT%H%M%SZ')}.#{encoding}",
+                          :options => {'size' => "17,17", 'rankdir' => 'LR'})
+    case search_by.upcase.to_sym
+    when :JOURNAL, :JOURNALS
+      journals().each{|u| grapher.graph_node(u) }
+    when :GROUP, :GROUPS
+      groups().each{|u| grapher.graph_node(u) }
+    when :NAVIGATION
+      start_time = param('start', Time.now - ((7 * 24) * (60 * 60)), search_option)
+      end_time = param('end', Time.now, search_option)
+      condition_expression = "created_at >= ? AND created_at < ?"
+      condition_values = [start_time, end_time]
+      if (client = (param('remote_addr', nil, search_option) || param('client', nil, search_option)))
+        condition_expression << " AND (remote_addr LIKE ?)"
+        client_pattern = "%" + client + "%"
+        condition_values << client_pattern
+      end
+      if (user = User.find_instance({:if_does_not_exist=> nil}.merge(args)))
+        condition_expression << " AND ((user_type = 'User' AND user_id = ?) OR
+                                       (instance_type = 'User' AND instance_id = ?) OR
+                                       referer LIKE ? )"
+        condition_values << user.id
+        condition_values << user.id
+        condition_values << "%users/#{user.id}/*"
+        condition_values << "%users/#{user.id}/%"
+      end
+      if (journal = Journal.find_instance({:if_does_not_exist=> nil}.merge(args)))
+        condition_expression << " AND ((instance_type = 'Journal' AND instance_id = ?) OR referer like ? OR referer like ?)"
+        condition_value << journal.id
+        condition_values << "journals/#{journal.id}/*"
+        condition_values << "journals/#{journal.id}/%"
+      end
+      requests = ModelStatistic.find(:all,
+                                      :conditions=> ([ condition_expression ] + condition_values),
+                                      :order=> 'created_at asc')
+      requests.each{|r| r.build_graph(grapher) }
+    else
+      users().each{|u| grapher.graph_node(u) }
+    end
+    
+    pathname = grapher.write()
+    content_type = ImagesController.file_type_mime_type(encoding)
+    send_file(pathname, :status=> 200, :disposition=> 'inline', :type=> content_type)
+    return
+  end
+  
+  def index()
+    render(:controller=> 'site', :action=> 'report')
+  end
+  
+  def settings()
+    @settings = []
+    Settings.each{|k, v| @settings << [k, v]}
+    @settings = @settings.sort_by{|pair| pair[0]}
+  end
+  
+  # extract the settings from the request and save the changes.
+  # log changes and notify
+  def update
+    name = params[:name]
+    value_string = params[:value]
+    flash[:notice] = ""
+    flash[:error] = ""
+    if (name && Settings.bound?(name))
+      old_value = Settings[name]
+      if (case old_value
+          when String
+            Settings[name] = value_string
+          when Integer
+            Settings[name] = Integer(value_string)
+          when Hash # intern the hash
+            Settings[name] = YAML.load(StringIO.new(value))
+          when TrueClass, FalseClass
+            case value_string.downcase.to_sym
+            when :true
+              Settings[name] = true
+              true
+            when :false
+              Settings[name] = false
+              true
+            end
+          else
+            false
+          end )
+        flash[:notice] = "Settings for '#{name}' modified."
+      else
+        flash[:error] = "Settings for '#{name}' unchanged."
+      end
+    else
+      flash[:error] = "Settings for '#{name}' not found."
+    end
+
+    settings()
+    render(:action=> 'settings')
+  end
+
+  def versions()
+    @versions = []
+    VERSIONS.each{|k, v| @versions << [k, v]}
+    @versions = @versions.sort_by{|pair| pair[0]}
+  end
+  
+
+  
+  hide_action :breadcrumb
+
+  def instance_page_title()
+    "Site - #{super()}"
+  end
+      
+  # generate a breadcrumb for the current resource
+  # the successive levels depend on the controller, the operation, and the requested resource.
+  # a journals_controller recognizes
+  #   :list :new :show
+  #   :create :destroy :index :update : all redirect
+  def breadcrumb_trail()
+    trail = [ ['Home', home_url] ]
+    trail << ["Site", {:controller=> "site", :action=> nil}]
+    trail
+  end
+
+  protected
+  
+  def permission_denied
+    logger.info("[authentication] Permission denied to %s at %s for %s" %
+      [(logged_in? ? current_user.login : 'guest'), Time.now, request.request_uri])
+    redirect_to( :controller=> 'pages', :action => 'index')
+    return false
+      
+  end
+end

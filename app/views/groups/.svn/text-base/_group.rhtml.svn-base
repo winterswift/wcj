@@ -1,0 +1,4 @@
+<li class="clearfix <%= cycle('odd', 'even') %>">
+  <h2><%= link_to group.title, group.url %><% unless @user %> <span><%= pluralize group.users.count, 'member' %></span><% end %></h2>
+  <p><%=h group.description %></p>
+</li>

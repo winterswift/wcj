@@ -1,0 +1,28 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+#
+# 2006-11-20  james.anderson  testing private groups
+
+agroup:
+  id: 1
+  title: "a group"
+  description: "this is a group"
+  state: "active"
+  scope: "public"
+  user_id: 1
+  created_at: <%= 1.days.ago.to_s :db %>
+  created_by: 1
+  updated_at: <%= 1.days.ago.to_s :db %>
+  updated_by: 1
+aprivategroup:
+  id: 2
+  title: "another group"
+  description: "this is a private group changed"
+  state: "active"
+  scope: "private"
+  user_id: 1
+  created_at: <%= 1.days.ago.to_s :db %>
+  created_by: 1
+  updated_at: <%= 1.days.ago.to_s :db %>
+  updated_by: 1
+
+  

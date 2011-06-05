@@ -1,0 +1,4 @@
+<h1>Contact us</h1>
+<p>Please provide us with contact information and write your message.</p>
+
+<%= render :partial => 'contact_form' %>

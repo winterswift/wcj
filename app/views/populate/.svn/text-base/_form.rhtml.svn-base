@@ -1,0 +1,20 @@
+<%= error_messages_for 'user' %>
+
+<!--[form:generation]-->
+<p><label for="users">user count</label><br/>
+<%= text_field_tag :user_count, @user_count  %></p>
+
+<p><label for="groups">group count</label><br/>
+<%= text_field_tag :group_count, @group_count %></p>
+
+<p><label for="journals">journal count</label><br/>
+<%= text_field_tag :journal_count, @journal_count %></p>
+
+<p><label for="entries">entry count</label><br/>
+<%= text_field_tag :entry_count, @entry_count  %></p>
+
+<p><label for="franchise">franchise count</label><br/>
+<%= text_field_tag :franchise_count, @franchise_count  %></p>
+
+<!--[eoform:user]-->
+

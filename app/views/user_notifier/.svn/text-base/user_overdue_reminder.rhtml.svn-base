@@ -1,0 +1,25 @@
+Hey Journal writer, the following journals need your attention:
+
+<% @journals.each{|journal_spec|
+ journal = journal_spec[0]
+ url = journal_spec[1] %>
+ Journal: '<%= journal.title %>'
+ Link: <%= url %>
+ Missing Entries: <%= journal.overdue_days %>
+
+ <% } %>
+ 
+You are receiving this email because you asked to be reminded to write in your
+journal. We hope this is helping you stay up-to-date with your writing. If this
+email is annoying and you don't want to see it again, you can turn off the
+reminder preference on your profile page:
+
+<%= @user_profile_url %>
+
+Thanks for being a member of Word Count Journal. Please help us to spread the word and build the world's largest community of journal writers!
+
+Write Away!
+
+-- The Word Count Journal Team
+
+<%= @url %>
